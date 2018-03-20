@@ -41,15 +41,39 @@
 	%In general, do not waste space on spurious information. Think about what the notional target reader needs to know in order to use your document, and include only that. At best, other information will waste some of the limited pages available to you.
 	%If you reference an external document (such as the documentation or website for the software you are testing), be sure to cite it appropriately, just as in any other submitted work.
 
-\section{Test Plan}% 25 Marks
+\section{Test Plan}% 25 Marks (2.5 pages)
 %A test plan
 %It should detain the methods used to build the test cases and the software tools used to achieve these
-	%Clearly define what constitutes "the software under test" and list the features that you will test and not test
-	%Exmplain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
-	%Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
-	%Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
+\subsection{Introduction}
+%o: What is JAVA MASON?
+%o: From a testing point of view MASON is a form of OPEN SOURCE SHRINKWRAP
+	%may be used in the wild by many people
+	%what other ramifications does this have?
 
-\section{Test Case Specifications}% 30 Marks
+\subsubsection{Tools}
+JUnit has been used to create automated unit tests for the software.
+UI tests?
+Git versioning has been used to ensure that ..?
+
+\subsection{Test Coverage}
+%Clearly define what constitutes "the software under test" and list the features that you will test and not test
+As stated in the project brief, the testing only needs to cover the \texttt{sim.engine}, \texttt{sim.field} and \texttt{sim.field.grid} packages, but not their subpackages.
+\texttt{sim.engine} is responsible for the core simulation management, including the agent scheduling.
+\texttt{sim.field} provides abstract classes for the representations of space in MASON simulation models, with subpackages managing specific instances of these.
+\texttt{sim.field.grid} provides various 2D and 3D grid representations of simulation space.
+
+%Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
+%Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
+
+%Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
+%o: These will help define the goals of our testing:
+	%find the maximum number of bugs?
+	%know whether we have undiscovered bugs?
+	%comply with regulator-set demands
+	%have a compelling defence in a courtcase (self-driving cars, too soon?)
+	%minimum time and cost?
+
+\section{Test Case Specifications}% 30 Marks (3 pages)
 %Test case specifications for 8 fully specified test cases. The test cases must be complementary: they must make different assumptions and test different specific features of the library.
 	%At minimum, each test case should describe the stimulus applied to the software (which might be a sequence of API calls, a sequence of user actions that are taken, or something else) and the expected
 		%i.e. correct behaviour
@@ -61,11 +85,17 @@
 	%For full marks in this section, tests should be conducted at a range of testing levels, including unit, integration and system level. Hint: explicitly label each of your tests with what level it’s working at.
 	%You may include short fragments of code within your test case specifications, but not larger ones. In particular, do not include whole JUnit tests. In essence, you need to provide enough information for a smart programmer to recreate your test code given some effort. e.g. if a test case involves a specific sequences of method calls, that sequence of method calls needs to be clear from the test case description.
 
-\section{Test Results}% 15 marks
+
+%o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
+%o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
+
+\section{Test Results}% 15 marks (1.5 pages)
 %The test results for each of the tests that were specified in item B.
 	%Here, you should document the results that occurred when the test cases are run. You should provide explicit indication of whether each test passed or failed, and in the latter case state what happened instead.
 
-\section{Test Summary Report}% 30 marks
+%o: screenshots may be useful, but add them in appendix?
+
+\section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
 	%a summary of the results you observed, including a classification of the faults found (by an appropriate classification scheme of your choosing)
