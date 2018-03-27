@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[11pt]{article}
 \usepackage{graphicx}
 \usepackage[nottoc,numbib]{tocbibind}
 \usepackage[a4paper, total={6in, 8in}]{geometry}
@@ -24,6 +24,7 @@
 
 %Your report must not exceed 10 sides of A4, minimum of 11pt font
 %minimum 120% line spacing
+%o: correct, see https://tex.stackexchange.com/questions/348678/how-to-set-document-line-spacing-in-pt-format
 %minimum 2cm margins on all sides
 
 %does not include covering page, table of contents or reference list
@@ -46,30 +47,61 @@
 %It should detain the methods used to build the test cases and the software tools used to achieve these
 \subsection{Introduction}
 %o: What is JAVA MASON?
+Java MASON is an agent-based..
+
 %o: From a testing point of view MASON is a form of OPEN SOURCE SHRINKWRAP
 	%may be used in the wild by many people
-	%what other ramifications does this have?
+	%what other ramifications does this have
+The software fits into the category of shrinkwrap meaning it may be used by many people in a variety of ways.
+
+%usage statistics can provide with an estimate of how well it needs to work
+%biological simulations- high profile studies have based hypotheses on this framework
+In particular, 
+
+The software is freely-available and open-source, which is a special case of shrinkwrap software.
+%As open source software is often developed without anyone being paid,
+	%only "fun" things are done
+	%i.e. NOT TESTING
+While some form of automated testing may have been conducted, it cannot be taken for granted as this has not been distributed with the source code, either on the MASON website, or its GitHub repository.
 
 \subsubsection{Tools}
+The IntelliJ IDE was used to explore the code and develop automated tests.
 JUnit has been used to create automated unit tests for the software.
 UI tests?
-Git versioning has been used to ensure that ..?
+\\
+
+Git version control has been used to manage the code for the JUnit tests. For a long term project, this would mean that automated tests could be updated alongside any code changes.
 
 \subsection{Test Coverage}
 %Clearly define what constitutes "the software under test" and list the features that you will test and not test
 As stated in the project brief, the testing only needs to cover the \texttt{sim.engine}, \texttt{sim.field} and \texttt{sim.field.grid} packages, but not their subpackages.
-\texttt{sim.engine} is responsible for the core simulation management, including the agent scheduling.
-\texttt{sim.field} provides abstract classes for the representations of space in MASON simulation models, with subpackages managing specific instances of these.
-\texttt{sim.field.grid} provides various 2D and 3D grid representations of simulation space.
+\begin{itemize}
+\item \texttt{sim.engine} is responsible for the core simulation management, including the agent scheduling.
+\item \texttt{sim.field} provides abstract classes for the representations of space in MASON simulation models, with subpackages managing specific instances of these.
+\item \texttt{sim.field.grid} provides various 2D and 3D grid representations of simulation space.
+\end{itemize}
 
 %Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
+The expected behaviour of the software has been determined using the extensive Java MASON documentation\cite{mason_doc}, first-party example implemtations as well as a number of open-source examples\cite{ppsim}.
+%usage by a private biological research institute
+%users will be research scientists with BASIC Java training
+The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
 %Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
+\\
+
+In order to design appropriate test cases an understanding of all levels of the system was needed.
+%how do we know how a general user works?
+%examples of real-world usage (PPSim), vs mason tutorials
+IntelliJ's Diagram feature helped to show how different components of the system are connected.
+Code coverage has provided a good understanding of which parts of the [code] are regularly used while running the software.
+Other metrics, such as how often different source files have been changed provide an insight into which files are most subject to change.
 
 %Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
 %o: These will help define the goals of our testing:
 	%find the maximum number of bugs?
 	%know whether we have undiscovered bugs?
 	%comply with regulator-set demands
+
 	%have a compelling defence in a courtcase (self-driving cars, too soon?)
 	%minimum time and cost?
 		%obviously here we have a set TIME- open assessment for 10 credit module
@@ -91,21 +123,42 @@ As stated in the project brief, the testing only needs to cover the \texttt{sim.
 
 %o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
 %o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
+\subsection{Test 1}
+\subsection{Test 2}
+\subsection{Test 3}
+\subsection{Test 4}
+\subsection{Test 5}
+\subsection{Test 6}
+\subsection{Test 7}
+\subsection{Test 8}
 
 \section{Test Results}% 15 marks (1.5 pages)
 %The test results for each of the tests that were specified in item B.
 	%Here, you should document the results that occurred when the test cases are run. You should provide explicit indication of whether each test passed or failed, and in the latter case state what happened instead.
 
 %o: screenshots may be useful, but add them in appendix?
+\subsection{Test 1}
+\subsection{Test 2}
+\subsection{Test 3}
+\subsection{Test 4}
+\subsection{Test 5}
+\subsection{Test 6}
+\subsection{Test 7}
+\subsection{Test 8}
 
 \section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
 	%a summary of the results you observed, including a classification of the faults found (by an appropriate classification scheme of your choosing)
 	%an overall evaluation of the thoroughness and quality of the testing you have performed
+		%o: code coverage results for unit testing?
 		%This should be in terms of what might be possible given substantial resources, not in terms of what is possible in a project with this time allocation and maximum report length.
 		%Describe the branch coverage and condition coverage, or the mutation score according to a reasonable mutation testing approach, that your tests achieved of the Java code (not of any other artefact). Briefly explain how you did it; make sure you state what tools you used and (where applicable) what mutation operators you used.
 	%an overall evaluation of the software tested (in terms of its freedom from faults)
+		%o: obviously due to time and limitations on the number of test cases, this is a limited assessment
+		%o: but OVERALL..?
+
+	
 
 %Throughout, the summary report should only refer to the test cases that were specified in (B), not any other testing you may have performed.
 
@@ -113,7 +166,13 @@ As stated in the project brief, the testing only needs to cover the \texttt{sim.
 \raggedright
 \bibliography{Report}{}
 \bibliographystyle{ieeetran}
-%\newpage
-%\section{Appendix}
+\newpage
+\section{Appendix}
+\begin{figure}[htp]
+\centering
+\includegraphics[width=\textwidth]{Appendix/UML}
+\caption{Reverse Engineered UML diagram of Class Hierarchy}
+\label{fig:uml}
+\end{figure}
 
 \end{document}
