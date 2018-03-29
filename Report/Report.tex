@@ -14,7 +14,10 @@
 \author{Y1481702}
 \date{\today}
 \setlength\parindent{0pt}
- 
+
+\setlength{\droptitle}{-2em} %ADJUST HEIGHT OF TITLE
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}} %ADJUST WHICH SECTIONS APPEAR IN CONTENTS TABLE
+
 \begin{document}
 \begin{titlepage}
 \clearpage\maketitle
@@ -73,6 +76,7 @@ UI tests?
 Git version control has been used to manage the code for the JUnit tests. For a long term project, this would mean that automated tests could be updated alongside any code changes.
 
 \subsection{Test Coverage}
+\subsubsection{System Overview}
 %Clearly define what constitutes "the software under test" and list the features that you will test and not test
 As stated in the project brief, the testing only needs to cover the \texttt{sim.engine}, \texttt{sim.field} and \texttt{sim.field.grid} packages, but not their subpackages.
 \begin{itemize}
@@ -82,7 +86,10 @@ As stated in the project brief, the testing only needs to cover the \texttt{sim.
 \end{itemize}
 
 %Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
-The expected behaviour of the software has been determined using the extensive Java MASON documentation\cite{mason_doc}, first-party example implemtations as well as a number of open-source examples\cite{ppsim}.
+The expected behaviour of the software has been determined using the extensive Java MASON documentation\cite{mason_doc}, first-party example implementations as well as a number of open-source examples\cite{ppsim}.
+%much of the project is several years old.. why is this?
+%	stable to not require updating?
+
 %usage by a private biological research institute
 %users will be research scientists with BASIC Java training
 The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
@@ -90,23 +97,80 @@ The system behaviour has been tested against the inferred requirements of the cl
 \\
 
 In order to design appropriate test cases an understanding of all levels of the system was needed.
+%are there any special features of the packages that are notable for testing?
+%	UI Testing is hard to test - See Lecture 6
+%	OO Code is hard to test
+%	concurrency	
+
 %how do we know how a general user works?
 %examples of real-world usage (PPSim), vs mason tutorials
 IntelliJ's Diagram feature helped to show how different components of the system are connected.
 Code coverage has provided a good understanding of which parts of the [code] are regularly used while running the software.
 Other metrics, such as how often different source files have been changed provide an insight into which files are most subject to change.
+\\
 
+Producing the right metrics to help test the application have been particularly difficult in this case.
+No real history of previous bug tracking
+GitHub commits are all credited to \textit{eclab} rather than individual developers
+
+Cyclomatic complexity can be a good measure of the most \textit{dangerous} sections of applications.
 %Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
 %o: These will help define the goals of our testing:
 	%find the maximum number of bugs?
 	%know whether we have undiscovered bugs?
+	%o: ^^THIS IS THE MAIN GOAL HERE- 'the institute would like to know if they can really trust the system to be dependable'
+	%'want you to provide a thorough assessent of its freedom from defects'
 	%comply with regulator-set demands
 
 	%have a compelling defence in a courtcase (self-driving cars, too soon?)
 	%minimum time and cost?
 		%obviously here we have a set TIME- open assessment for 10 credit module
 
+\subsubsection{Unit Testing}
+Unit Testing should NOT cover:
+-Trivial Code- getters, setters
+-Code that has non-deterministic results
+-Code that deals only with UI
+but SHOULD cover:
+-Core code that is accessed by (a lot of) other modules
+-Code that seems to gather a lot of bugs, how do we determine this?
+-Code that changes by multiple different developers, github commits may not tell whole story here?
+\cite{dont_test_blindly}
 
+Aim for 60-70\% code coverage of business logic,
+\textasciitilde 20\% of the overall application.
+
+%Mutation Testing?
+
+\subsubsection{System Testing}
+%TEST THE WHOLE SYSTEM, typically blackbox
+
+%Functional, but ALSO non-functional requirements..
+
+\subsubsection{Integration Testing}
+%testing interacting classes..
+
+%not fully within the scope of our testing, we have only been asked to test
+	%sim.engine
+	%sim.field
+	%sim.field.grid
+
+%We CAN/COULD test interacting classes here?
+
+\subsubsection{Acceptance Testing}
+Would help us to understand the domain and market better-
+particularly useful in this case
+	-users have received a basic level of Java training, we need to know if MASON is an appropriate tool or too complex?
+	%BUT NOT PART OF OUR BRIEF, this will be done in a later stage once we decide if the tool is free from defects
+
+Should be meaningful for the customer- performed on potential users
+-not available as an option due to the requirement to find users...
+Acceptance Testing- I am NOT a domain expert..
+
+\subsubsection{Regression Testing}
+Unfortunately neither the website nor the GitHub repository for MASON provide any previously implemented automated testing.
+Either this testing has not been done, which is common with freely-distributed software, or it has not been publicly distributed.
+As such, it will not be possible to run any regression testing as part of the project.
 
 \section{Test Case Specifications}% 30 Marks (3 pages)
 %Test case specifications for 8 fully specified test cases. The test cases must be complementary: they must make different assumptions and test different specific features of the library.
@@ -123,28 +187,28 @@ Other metrics, such as how often different source files have been changed provid
 
 %o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
 %o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
-\subsection{Test 1}
-\subsection{Test 2}
-\subsection{Test 3}
-\subsection{Test 4}
-\subsection{Test 5}
-\subsection{Test 6}
-\subsection{Test 7}
-\subsection{Test 8}
+\subsection{Test Case 1}
+\subsection{Test Case 2}
+\subsection{Test Case 3}
+\subsection{Test Case 4}
+\subsection{Test Case 5}
+\subsection{Test Case 6}
+\subsection{Test Case 7}
+\subsection{Test Case 8}
 
 \section{Test Results}% 15 marks (1.5 pages)
 %The test results for each of the tests that were specified in item B.
 	%Here, you should document the results that occurred when the test cases are run. You should provide explicit indication of whether each test passed or failed, and in the latter case state what happened instead.
 
 %o: screenshots may be useful, but add them in appendix?
-\subsection{Test 1}
-\subsection{Test 2}
-\subsection{Test 3}
-\subsection{Test 4}
-\subsection{Test 5}
-\subsection{Test 6}
-\subsection{Test 7}
-\subsection{Test 8}
+\subsection{Test Case 1}
+\subsection{Test Case 2}
+\subsection{Test Case 3}
+\subsection{Test Case 4}
+\subsection{Test Case 5}
+\subsection{Test Case 6}
+\subsection{Test Case 7}
+\subsection{Test Case 8}
 
 \section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
