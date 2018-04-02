@@ -4,6 +4,8 @@
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{titling}
 \usepackage{fancyhdr}
+\usepackage{multirow}
+\usepackage{subcaption}
 \pagestyle{fancy}
 \fancyhead{}
 \renewcommand{\headrulewidth}{0pt}
@@ -64,12 +66,9 @@ For MASON in particular, it is likely that the software has not been thoroughly 
 %biological simulations- high profile studies have based hypotheses on this framework
 
 \subsubsection{Tools}
-The IntelliJ IDE was used to explore the code and develop automated tests.
-JUnit has been used to create automated unit tests for the software.
-UI tests?
-\\
-
-Git version control has been used to manage the code for the JUnit tests. For a long term project, this would mean that automated tests could be updated alongside any code changes.
+The IntelliJ IDE was used to explore the code and develop automated tests. This IDE gives powerful features, including plugins for generating code metrics, and displaying coverage of unit testing.
+JUnit has been used to create automated unit testing for the software.
+Git version control has been used to manage the code for the JUnit tests. For a long term project, this would be particularly advantageous as any automated tests could be updated and versioned alongside any code changes.
 
 \subsection{Test Coverage}
 \subsubsection{System Overview}
@@ -244,6 +243,80 @@ The significant limitations of testing resources reduce the level of confidence 
 \bibliographystyle{ieeetran}
 \newpage
 \section{Appendix}
+
+%CODE METRICS:
+%Courtesy of the MetricsReloaded IntelliJ plugin:
+%MAY WANT TO MOVE some of these tables into the report body if relevant?
+
+\begin{figure}[htp]
+\begin{subfigure}[b]{\textwidth}
+\begin{center}
+\begin{tabular}{|c|r|}
+	\hline
+	\textbf{Package} & \textbf{Lines of Code} \\
+	\hline
+	\texttt{sim.engine} & 444 \\
+	\texttt{sim.field} & 2,961 \\
+	\texttt{sim.field.grid} & 10,248 \\
+	\hline
+	\textbf{Total} & 13,653 \\
+	\hline
+	Average & 4,551 \\
+	\hline
+\end{tabular}
+\end{center}
+\caption{Lines of Code}
+\label{fig:loc}
+\end{subfigure}
+
+\par\bigskip
+
+\begin{subfigure}[b]{\textwidth}
+\begin{center}
+\begin{tabular}{|c|r|r|}
+	\hline
+	\multirow{2}{4em}{\textbf{Package}} & \multicolumn{2}{|c|}{\textbf{v(G)}} \\
+	\cline{2-3}
+	& Average & Total \\
+	\hline
+	\texttt{sim.engine} & 2.43 & 374 \\
+	\texttt{sim.field} & 2.38 & 57 \\
+	\texttt{sim.field.grid} & 3.75 & 1,829 \\
+	\hline
+	\textbf{Total} && 2,260 \\
+	\hline
+	Average & 3.39 & 753.33 \\
+	\hline
+\end{tabular}
+\end{center}
+\caption{Cyclomatic Complexity}
+\label{fig:cc}
+\end{subfigure}
+
+\par\bigskip
+
+\begin{subfigure}[b]{\textwidth}
+\begin{center}
+\begin{tabular}{|c|r|r|}
+	\hline
+	\textbf{Package} & \textbf{PDcy} & \textbf{PDpt} \\
+	\hline
+	\texttt{sim.engine} & 2 & 54 \\
+	\texttt{sim.field} & 1 & 24 \\
+	\texttt{sim.field.grid} & 2 & 20 \\
+	\hline
+	Average & 1.67 & 32.67 \\
+	\hline
+\end{tabular}
+\end{center}
+\caption{Package Dependency}
+\label{fig:dependency}
+\end{subfigure}
+
+\caption{Code Metrics for the relevant MASON libraries}
+\label{fig:metrics}
+\end{figure}
+
 \begin{figure}[htp]
 \centering
 \includegraphics[width=\textwidth]{Appendix/UML}
