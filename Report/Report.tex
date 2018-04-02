@@ -50,22 +50,18 @@
 %It should detain the methods used to build the test cases and the software tools used to achieve these
 \subsection{Introduction}
 %o: What is JAVA MASON?
-Java MASON is an agent-based..
-
+MASON is a software library for creating agent-based simulations in Java. 
 %o: From a testing point of view MASON is a form of OPEN SOURCE SHRINKWRAP
 	%may be used in the wild by many people
 	%what other ramifications does this have
-The software fits into the category of shrinkwrap meaning it may be used by many people in a variety of ways.
-
-%usage statistics can provide with an estimate of how well it needs to work
-%biological simulations- high profile studies have based hypotheses on this framework
-In particular, 
-
-The software is freely-available and open-source, which is a special case of shrinkwrap software.
+The software fits into the category of shrinkwrap meaning it might be in use in a wide range of real-world production environments. The software is freely-available and open-source, which is a special case of shrinkwrap software. A common trait of open-source software is that tasks 'that are not considered "fun" often don't get done'.\cite{five_worlds}
 %As open source software is often developed without anyone being paid,
 	%only "fun" things are done
 	%i.e. NOT TESTING
-While some form of automated testing may have been conducted, it cannot be taken for granted as this has not been distributed with the source code, either on the MASON website, or its GitHub repository.
+For MASON in particular, it is likely that the software has not been thoroughly tested as there is no trace of any automated testing, either on the MASON website, or its GitHub repository.
+
+%usage statistics can provide with an estimate of how well it needs to work
+%biological simulations- high profile studies have based hypotheses on this framework
 
 \subsubsection{Tools}
 The IntelliJ IDE was used to explore the code and develop automated tests.
@@ -93,10 +89,30 @@ The expected behaviour of the software has been determined using the extensive J
 %usage by a private biological research institute
 %users will be research scientists with BASIC Java training
 The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
-%Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
+%WHAT IS THE ACCEPTABILITY CRITERIA:
+The client needs the software to...
+\\
+%Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
+%o: These will help define the goals of our testing:
+	%find the maximum number of bugs?
+	%know whether we have undiscovered bugs?
+	%o: ^^THIS IS THE MAIN GOAL HERE- 'the institute would like to know if they can really trust the system to be dependable'
+	%'want you to provide a thorough assessent of its freedom from defects'
+	%comply with regulator-set demands
+
+	%have a compelling defence in a courtcase (self-driving cars, too soon?)
+	%minimum time and cost?
+		%obviously here we have a set TIME- open assessment for 10 credit module
+There are a number of goals we could define for our testing, such as finding the maximum number of bugs or complying with regulator set demands. The given requirement here is to verify, with a limited number of resources, that the software is dependable.
+In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}. As such, the main requirement for our testing is to find a significant number of undiscovered bugs.
 \\
 
-In order to design appropriate test cases an understanding of all levels of the system was needed.
+%Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
+In order to design appropriate test cases an understanding of all levels of the system was needed. As resources here are significantly limited (only 8 testcases are allowed) it will be necessary to ensure they are used in the most effective way.
+
+It has been shown across software projects that some modules of code may be significantly more error prone than others[cite].
+\cite{predicting_from_history} demonstrated how various metrics can help predict which parts of the code that bugs may be hiding in.
+
 %are there any special features of the packages that are notable for testing?
 %	UI Testing is hard to test - See Lecture 6
 %	OO Code is hard to test
@@ -110,21 +126,12 @@ Other metrics, such as how often different source files have been changed provid
 \\
 
 Producing the right metrics to help test the application have been particularly difficult in this case.
+%Metrics Reloaded may be a good tool for this..
 No real history of previous bug tracking
 GitHub commits are all credited to \textit{eclab} rather than individual developers
 
-Cyclomatic complexity can be a good measure of the most \textit{dangerous} sections of applications.
-%Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
-%o: These will help define the goals of our testing:
-	%find the maximum number of bugs?
-	%know whether we have undiscovered bugs?
-	%o: ^^THIS IS THE MAIN GOAL HERE- 'the institute would like to know if they can really trust the system to be dependable'
-	%'want you to provide a thorough assessent of its freedom from defects'
-	%comply with regulator-set demands
 
-	%have a compelling defence in a courtcase (self-driving cars, too soon?)
-	%minimum time and cost?
-		%obviously here we have a set TIME- open assessment for 10 credit module
+Cyclomatic complexity can be a good measure of the most \textit{dangerous} sections of applications.
 
 \subsubsection{Unit Testing}
 Unit Testing should NOT cover:
@@ -136,6 +143,8 @@ but SHOULD cover:
 -Code that seems to gather a lot of bugs, how do we determine this?
 -Code that changes by multiple different developers, github commits may not tell whole story here?
 \cite{dont_test_blindly}
+
+Pareto's law: 80\% of the bugs, are found within 20\% of the modules..! CITE
 
 Aim for 60-70\% code coverage of business logic,
 \textasciitilde 20\% of the overall application.
@@ -158,14 +167,17 @@ Aim for 60-70\% code coverage of business logic,
 %We CAN/COULD test interacting classes here?
 
 \subsubsection{Acceptance Testing}
-Would help us to understand the domain and market better-
-particularly useful in this case
-	-users have received a basic level of Java training, we need to know if MASON is an appropriate tool or too complex?
-	%BUT NOT PART OF OUR BRIEF, this will be done in a later stage once we decide if the tool is free from defects
+Acceptance Testing could be performed to determine if the software can be operated effectively by our end users.
+Acceptance testing can be useful for understanding the domain of our software better, but as we are not intending to further develop MASON, this is not particularly relevant here.
+%Should be meaningful for the customer- performed on potential users
+%-not available as an option due to the requirement to find users...
+Acceptance Testing should be performed ON?/BY? domain experts?- I am NOT a domain expert..
+\\
 
-Should be meaningful for the customer- performed on potential users
--not available as an option due to the requirement to find users...
-Acceptance Testing- I am NOT a domain expert..
+While acceptance testing will not help us determine that the software is \textit{dependable}, it would help to discover if it is appropriate for the target audience. In particular, our users have supposedly only received a basic level of Java training. It has been stated that MASON is less-suited to beginner programmers, when compared to other tools, such as NetLogo\cite{abm_platforms_review}.
+%BUT NOT PART OF OUR BRIEF, this will be done in a later stage once we decide if the tool is free from defects
+
+%modules in question, aren't directly accessible to the user?
 
 \subsubsection{Regression Testing}
 Unfortunately neither the website nor the GitHub repository for MASON provide any previously implemented automated testing.
@@ -222,7 +234,7 @@ As such, it will not be possible to run any regression testing as part of the pr
 		%o: obviously due to time and limitations on the number of test cases, this is a limited assessment
 		%o: but OVERALL..?
 
-	
+The significant limitations of testing resources reduce the level of confidence with which we can say that the software is free from defects.
 
 %Throughout, the summary report should only refer to the test cases that were specified in (B), not any other testing you may have performed.
 
