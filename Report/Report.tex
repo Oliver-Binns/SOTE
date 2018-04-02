@@ -1,11 +1,18 @@
 \documentclass[11pt]{article}
-\usepackage{graphicx}
-\usepackage[nottoc,numbib]{tocbibind}
-\usepackage[a4paper, total={6in, 8in}]{geometry}
-\usepackage{titling}
+\usepackage[usenames, dvipsnames]{color}
+\definecolor{pass_grn}{RGB}{0, 230, 0}
+\definecolor{fail_red}{RGB}{230, 0, 0}
 \usepackage{fancyhdr}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{graphicx}
 \usepackage{multirow}
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}
 \usepackage{subcaption}
+\usepackage{titling}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{wrapfig}
 \pagestyle{fancy}
 \fancyhead{}
 \renewcommand{\headrulewidth}{0pt}
@@ -17,8 +24,8 @@
 \date{\today}
 \setlength\parindent{0pt}
 
-\setlength{\droptitle}{-2em} %ADJUST HEIGHT OF TITLE
-\addtocontents{toc}{\protect\setcounter{tocdepth}{2}} %ADJUST WHICH SECTIONS APPEAR IN CONTENTS TABLE
+%\setlength{\droptitle}{-2em} %ADJUST HEIGHT OF TITLE
+%\addtocontents{toc}{\protect\setcounter{tocdepth}{2}} %ADJUST WHICH SECTIONS APPEAR IN CONTENTS TABLE
 
 \begin{document}
 \begin{titlepage}
@@ -72,45 +79,44 @@ Git version control has been used to manage the code for the JUnit tests. For a 
 
 \subsection{Test Coverage}
 \subsubsection{System Overview}
+%Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
+In order to design appropriate test cases an understanding of all levels of the system was needed. As resources here are significantly limited, with only 8 testcases are allowed, it will be necessary to ensure they are used in the most effective way.
 %Clearly define what constitutes "the software under test" and list the features that you will test and not test
-As stated in the project brief, the testing only needs to cover the \texttt{sim.engine}, \texttt{sim.field} and \texttt{sim.field.grid} packages, but not their subpackages.
+As stated in the project brief, the testing only needs to cover the \texttt{sim.engine}, \texttt{sim.field} and \texttt{sim.field.grid} packages, but not their subpackages:
+
 \begin{itemize}
 \item \texttt{sim.engine} is responsible for the core simulation management, including the agent scheduling.
 \item \texttt{sim.field} provides abstract classes for the representations of space in MASON simulation models, with subpackages managing specific instances of these.
 \item \texttt{sim.field.grid} provides various 2D and 3D grid representations of simulation space.
 \end{itemize}
 
-%Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
-The expected behaviour of the software has been determined using the extensive Java MASON documentation\cite{mason_doc}, first-party example implementations as well as a number of open-source examples\cite{ppsim}.
+Fig. \ref{fig:loc} shows the proportional sizes of each of these three modules.
+\\
+
+It has been shown across software projects that some modules of code may be significantly more error prone than others.
+The Pareto principle is said to hold with software bugs, with 80\% of software bugs being found within 20\% of the code\cite[pp. 124]{pressman}.
+We can use a variety of metrics about our software to predict which parts of the code that these bugs may be hiding in\cite{predicting_from_history}.
+Cyclomatic complexity can be a good measure of the most \textit{dangerous} sections of applications.
+\\
+
+\begin{figure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width=\textwidth]{Appendix/LOC}
+\caption{Lines of Code}
+\label{fig:loc}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\includegraphics[width=\textwidth]{Appendix/Cyclomatic}
+\caption{Cyclomatic Complexity}
+\label{fig:cc}
+\end{subfigure}
+
+\caption{Charts showing various metrics of MASON}
+\label{fig:metric_charts}
+\end{figure}
+
 %much of the project is several years old.. why is this?
-%	stable to not require updating?
-
-%usage by a private biological research institute
-%users will be research scientists with BASIC Java training
-The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
-%WHAT IS THE ACCEPTABILITY CRITERIA:
-The client needs the software to...
-\\
-%Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
-%o: These will help define the goals of our testing:
-	%find the maximum number of bugs?
-	%know whether we have undiscovered bugs?
-	%o: ^^THIS IS THE MAIN GOAL HERE- 'the institute would like to know if they can really trust the system to be dependable'
-	%'want you to provide a thorough assessent of its freedom from defects'
-	%comply with regulator-set demands
-
-	%have a compelling defence in a courtcase (self-driving cars, too soon?)
-	%minimum time and cost?
-		%obviously here we have a set TIME- open assessment for 10 credit module
-There are a number of goals we could define for our testing, such as finding the maximum number of bugs or complying with regulator set demands. The given requirement here is to verify, with a limited number of resources, that the software is dependable.
-In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}. As such, the main requirement for our testing is to find a significant number of undiscovered bugs.
-\\
-
-%Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
-In order to design appropriate test cases an understanding of all levels of the system was needed. As resources here are significantly limited (only 8 testcases are allowed) it will be necessary to ensure they are used in the most effective way.
-
-It has been shown across software projects that some modules of code may be significantly more error prone than others[cite].
-\cite{predicting_from_history} demonstrated how various metrics can help predict which parts of the code that bugs may be hiding in.
+%	stable to not require updating
 
 %are there any special features of the packages that are notable for testing?
 %	UI Testing is hard to test - See Lecture 6
@@ -129,8 +135,32 @@ Producing the right metrics to help test the application have been particularly 
 No real history of previous bug tracking
 GitHub commits are all credited to \textit{eclab} rather than individual developers
 
+\subsubsection{Testing Goals}
+%WHAT IS THE ACCEPTABILITY CRITERIA:
+The client needs the software to...
+\\
+%Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
+%o: These will help define the goals of our testing:
+	%find the maximum number of bugs?
+	%know whether we have undiscovered bugs?
+	%o: ^^THIS IS THE MAIN GOAL HERE- 'the institute would like to know if they can really trust the system to be dependable'
+	%'want you to provide a thorough assessent of its freedom from defects'
+	%comply with regulator-set demands
 
-Cyclomatic complexity can be a good measure of the most \textit{dangerous} sections of applications.
+	%have a compelling defence in a courtcase (self-driving cars, too soon?)
+	%minimum time and cost?
+		%obviously here we have a set TIME- open assessment for 10 credit module
+There are a number of goals we could define for our testing, such as finding the maximum number of bugs or complying with regulator set demands. The given requirement here is to verify, with a limited number of resources, that the software is dependable.
+In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}. As such, the main requirement for our testing is to find a significant number of undiscovered bugs.
+\\
+
+\subsubsection{Expected Behaviour}
+%usage by a private biological research institute
+%users will be research scientists with BASIC Java training
+The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
+
+%Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
+The expected behaviour of the software has been determined using the extensive Java MASON documentation\cite{mason_doc}, first-party example implementations as well as a number of open-source examples\cite{ppsim}.
 
 \subsubsection{Unit Testing}
 Unit Testing should NOT cover:
@@ -212,14 +242,29 @@ As such, it will not be possible to run any regression testing as part of the pr
 	%Here, you should document the results that occurred when the test cases are run. You should provide explicit indication of whether each test passed or failed, and in the latter case state what happened instead.
 
 %o: screenshots may be useful, but add them in appendix?
-\subsection{Test Case 1}
-\subsection{Test Case 2}
-\subsection{Test Case 3}
-\subsection{Test Case 4}
-\subsection{Test Case 5}
-\subsection{Test Case 6}
-\subsection{Test Case 7}
-\subsection{Test Case 8}
+\begin{center}
+\begin{tabular}{|c|c|r|}
+	\hline
+	\textbf{Test Case} & \textbf{Passed} & \textbf{Description} \\
+	\hline
+	1 & \textcolor{pass_grn}{\cmark} &\\
+	\hline
+	2 & \textcolor{fail_red}{\xmark} &\\
+	\hline
+	3 & \textcolor{pass_grn}{\cmark} &\\
+	\hline
+	4 & \textcolor{pass_grn}{\cmark} &\\
+	\hline
+	5 & \textcolor{pass_grn}{\cmark} &\\
+	\hline
+	6 & \textcolor{pass_grn}{\cmark} &\\
+	\hline
+	7 & \textcolor{pass_grn}{\cmark} &\\
+	\hline
+	8 & \textcolor{pass_grn}{\cmark} &\\
+	\hline
+\end{tabular}
+\end{center}
 
 \section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
@@ -249,7 +294,7 @@ The significant limitations of testing resources reduce the level of confidence 
 %MAY WANT TO MOVE some of these tables into the report body if relevant?
 
 \begin{figure}[htp]
-\begin{subfigure}[b]{\textwidth}
+\begin{subfigure}[b]{0.5\textwidth}
 \begin{center}
 \begin{tabular}{|c|r|}
 	\hline
@@ -266,12 +311,31 @@ The significant limitations of testing resources reduce the level of confidence 
 \end{tabular}
 \end{center}
 \caption{Lines of Code}
-\label{fig:loc}
+\label{table:loc}
+\end{subfigure}
+\begin{subfigure}[b]{0.5\textwidth}
+\begin{center}
+\begin{tabular}{|c|r|}
+	\hline
+	\textbf{Package} & \textbf{Class Count} \\
+	\hline
+	\texttt{sim.engine} & 25 \\
+	\texttt{sim.field} & 6 \\
+	\texttt{sim.field.grid} & 14 \\
+	\hline
+	\textbf{Total} & 45 \\
+	\hline
+	Average & 15 \\
+	\hline
+\end{tabular}
+\end{center}
+\caption{Class Count}
+\label{table:class_count}
 \end{subfigure}
 
 \par\bigskip
 
-\begin{subfigure}[b]{\textwidth}
+\begin{subfigure}[b]{0.5\textwidth}
 \begin{center}
 \begin{tabular}{|c|r|r|}
 	\hline
@@ -290,16 +354,13 @@ The significant limitations of testing resources reduce the level of confidence 
 \end{tabular}
 \end{center}
 \caption{Cyclomatic Complexity}
-\label{fig:cc}
+\label{table:cc}
 \end{subfigure}
-
-\par\bigskip
-
-\begin{subfigure}[b]{\textwidth}
+\begin{subfigure}[b]{0.5\textwidth}
 \begin{center}
 \begin{tabular}{|c|r|r|}
 	\hline
-	\textbf{Package} & \textbf{PDcy} & \textbf{PDpt} \\
+	\textbf{Package} & \textbf{Dependencies} & \textbf{Dependants} \\
 	\hline
 	\texttt{sim.engine} & 2 & 54 \\
 	\texttt{sim.field} & 1 & 24 \\
@@ -310,11 +371,11 @@ The significant limitations of testing resources reduce the level of confidence 
 \end{tabular}
 \end{center}
 \caption{Package Dependency}
-\label{fig:dependency}
+\label{table:dependency}
 \end{subfigure}
 
 \caption{Code Metrics for the relevant MASON libraries}
-\label{fig:metrics}
+\label{tables:metrics}
 \end{figure}
 
 \begin{figure}[htp]
