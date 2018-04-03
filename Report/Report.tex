@@ -90,13 +90,31 @@ As stated in the project brief, the testing only needs to cover the \texttt{sim.
 \item \texttt{sim.field.grid} provides various 2D and 3D grid representations of simulation space.
 \end{itemize}
 
-Fig. \ref{fig:loc} shows the proportional sizes of each of these three modules.
+Each of the Fig. \ref{fig:loc} shows the proportional sizes of each of these three modules.
 \\
 
 It has been shown across software projects that some modules of code may be significantly more error prone than others.
 The Pareto principle is said to hold with software bugs, with 80\% of software bugs being found within 20\% of the code\cite[pp. 124]{pressman}.
 We can use a variety of metrics about our software to predict which parts of the code that these bugs may be hiding in\cite{predicting_from_history}.
-Cyclomatic complexity can be a good measure of the most \textit{dangerous} sections of applications.
+\\
+
+%Complexity:
+High cyclomatic complexity (Fig. \ref{fig:cc}/Fig. \ref{table:cc}) can be a good indicator of the most bug-ridden sections of applications.
+%Dependency:
+Fig. \ref{table:dependency} shows how the packages in the test scope interact with other packages in the system. In particular, \texttt{sim.engine} is relied on by a large number of packages.
+%IntelliJ's Diagram feature helped to show how different components of the system are connected.
+%Code Coverage during simulation/runtime?
+Code coverage has provided a good understanding of which parts of the [code] are regularly used while running the software.
+%Code changes:
+How often different source files have changes is also a particularly useful metric. Files which are subject to frequent change have had more opportunity to develop additional bugs.
+%Plot cyclomatic complexity against loc for files?
+%files which score high on this are likely to contain bugs- SHOULD BE REFACTORED
+\\
+
+%Unavailable?
+Producing the right metrics to help test the application have been particularly difficult in this case.
+No real history of previous bug tracking
+GitHub commits are all credited to \textit{eclab} rather than individual developers
 \\
 
 \begin{figure}
@@ -125,15 +143,7 @@ Cyclomatic complexity can be a good measure of the most \textit{dangerous} secti
 
 %how do we know how a general user works?
 %examples of real-world usage (PPSim), vs mason tutorials
-IntelliJ's Diagram feature helped to show how different components of the system are connected.
-Code coverage has provided a good understanding of which parts of the [code] are regularly used while running the software.
-Other metrics, such as how often different source files have been changed provide an insight into which files are most subject to change.
-\\
 
-Producing the right metrics to help test the application have been particularly difficult in this case.
-%Metrics Reloaded may be a good tool for this..
-No real history of previous bug tracking
-GitHub commits are all credited to \textit{eclab} rather than individual developers
 
 \subsubsection{Testing Goals}
 %WHAT IS THE ACCEPTABILITY CRITERIA:
@@ -160,22 +170,17 @@ In general, it's better to test with the aim of showing a product fails, if we c
 The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
 
 %Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
-The expected behaviour of the software has been determined using the extensive Java MASON documentation\cite{mason_doc}, first-party example implementations as well as a number of open-source examples\cite{ppsim}.
+The expected behaviour of the software has been determined using the extensive MASON documentation\cite{mason_doc}, first-party example implementations as well as a number of open-source examples\cite{ppsim}.
 
 \subsubsection{Unit Testing}
-Unit Testing should NOT cover:
--Trivial Code- getters, setters
--Code that has non-deterministic results
--Code that deals only with UI
-but SHOULD cover:
--Core code that is accessed by (a lot of) other modules
--Code that seems to gather a lot of bugs, how do we determine this?
--Code that changes by multiple different developers, github commits may not tell whole story here?
-\cite{dont_test_blindly}
+Unit Testing allows the testing of small sections of source code. In this case, unit tests will help us to isolate the select packages that are within the scope of testing from the rest of the system.
+\\
 
-Pareto's law: 80\% of the bugs, are found within 20\% of the modules..! CITE
+Unit testing should focus on core code that is a dependency for other modules, code that regularly gathers bugs and code that is changed by a number of different developers. It should not cover trivial code, such as accessors and mutators, code with non-deterministic results or UI code.\cite{dont_test_blindly}
 
-Aim for 60-70\% code coverage of business logic,
+
+Mention Pareto principle again!
+Aim for 60-70\% code coverage of business logic, %has this come from don't test blindly?
 \textasciitilde 20\% of the overall application.
 
 %Mutation Testing?
@@ -376,6 +381,13 @@ The significant limitations of testing resources reduce the level of confidence 
 
 \caption{Code Metrics for the relevant MASON libraries}
 \label{tables:metrics}
+\end{figure}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=\textwidth]{Appendix/complexityVchange}
+\caption{Cyclomatic Complexity and Number of File Revisions for classes in Test Scope}
+\label{fig:complexityVchange}
 \end{figure}
 
 \begin{figure}[htp]
