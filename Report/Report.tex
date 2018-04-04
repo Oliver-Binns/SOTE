@@ -101,6 +101,12 @@ We can use a variety of metrics about our software to predict which parts of the
 
 %Complexity:
 High cyclomatic complexity (Fig. \ref{fig:cc}/Fig. \ref{table:cc}) can be a good indicator of the most bug-ridden sections of applications.
+The causality here can be easily understood: complexity creates confusion which results in developers misunderstanding the software they are trying to build.
+This misunderstanding can provoke a large number of bugs in the code.
+The graphs show that \texttt{sim.field.grid} has a slightly higher share of the code's complexity than lines of code, this should be investigated in further detail.
+%FIND GRAPH THAT SHOWS DISPROPORTIONATE COMPLEXITY BETWEEN sim.field.grid classes!
+\\
+
 %Dependency:
 Fig. \ref{table:dependency} shows how the packages in the test scope interact with other packages in the system. In particular, \texttt{sim.engine} is relied on by a large number of packages.
 %IntelliJ's Diagram feature helped to show how different components of the system are connected.
@@ -166,7 +172,7 @@ As such, the main requirement for our testing is to find any significant undisco
 
 Due to limited resources, the tests will aim to cover the parts of the software which are likely to be used more often by the target users.
 MASON is bundled with some demo simulations that give example usages for the library.
-Running these simulations with code coverage detection turned on has given a good overview of which parts of the code are used regularly.
+Running these simulations with code coverage detection turned on has given a good overview of which parts of the code are used regularly (Fig. \ref{fig:coverage_heatbugs}).
 Core simulation code that is used routinely by all simulations regardless of their customisations should be tested the most rigourously.
 Both the documentation and code coverage checks indicate that this type of code can be found within \texttt{sim.engine}.
 
@@ -204,15 +210,23 @@ Aim for 60-70\% code coverage of business logic, %has this come from don't test 
 
 \subsubsection{Integration Testing}
 %testing interacting classes..
+	%focus on communication and flow of information between the modules
 
 %not fully within the scope of our testing, we have only been asked to test
 	%sim.engine
 	%sim.field
 	%sim.field.grid
 
-%We CAN/COULD test interacting classes here?
+	%we can test the way these packages interact...
+	%classes within these packages interact?
+
+%three main approaches to this:
+	%big bang
+	%top down
+	%bottom-up
 
 \subsubsection{Acceptance Testing}
+%HELPS ENSURE THE CUSTOMER TRUSTS OUR QUALITY CLAIM
 Acceptance Testing could be performed to determine if the software can be operated effectively by our end users.
 Acceptance testing can be useful for understanding the domain of our software better, but as we are not intending to further develop MASON, this is not particularly relevant here.
 %Should be meaningful for the customer- performed on potential users
@@ -246,14 +260,16 @@ As such, it will not be possible to run any regression testing as part of the pr
 %o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
 %o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
 \subsection{Test Cases 1-3}
-\begin{wrapfigure}{r}{0.4\textwidth} 
-  \begin{center}
-    \includegraphics[width=0.4\textwidth]{Appendix/Schedule}
-    \caption{Schedule Class}
-    \label{fig:schedule}
-  \end{center}
+\begin{wrapfigure}[14]{r}{0.4\textwidth} 
+	\vspace{-25pt}
+	\begin{center}
+		\includegraphics[width=0.4\textwidth]{Appendix/Schedule}
+		\caption{Schedule Class}
+		\label{fig:schedule}
+	\end{center}
 \end{wrapfigure}
 As previously stated, our initial unit testing will focus on the simulation scheduler which provides the core functionality for MASON. This functionality is contained within the Schedule class as shown in Fig. \ref{fig:schedule}. While this class initially appears to be quite large, at closer inspection, many of its methods are simply overloading others, due to Java's lack of real support for default function arguments.
+\\
 
 By removing trivial methods (accessors, mutators, overloading methods), we can reduce the class down to:
 \begin{itemize}
@@ -264,14 +280,25 @@ By removing trivial methods (accessors, mutators, overloading methods), we can r
 	\item \texttt{scheduleRepeating}: Adds the specified item to the schedule, to repeat continously at specified interval.
 \end{itemize}
 
-By constructing a test that ensure the simulation step function works correctly, we will also indirectly test that the schedule method works as expected.
+By constructing a test that ensure the simulation \texttt{step} method works correctly, we will also indirectly test that the \texttt{\_scheduleOnce} method works as expected during our setup process. \texttt{\_scheduleOnce} is a private method, so this will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(double, Steppable)}. This is \textbf{Test Case 1}.
+\\
 
+\textbf{Test Case 2} is similar, but will utilise the \texttt{scheduleRepeating} to ensure that the Schedule correctly manages recurring events.
+\\
+
+\textbf{Test Case 3} ...?
+\\
+%While limited to select classes.. 
+%These tests achieve a good level of code coverage () over these essential functionality.
+%Having a good understanding of the classes' intentions should ensure that the tests are also meaningful
 
 \subsection{Test Case 4}
 \subsection{Test Case 5}
 \subsection{Test Case 6}
 \subsection{Test Case 7}
 \subsection{Test Case 8}
+%Testing non-deterministic events is hard:
+%We can perform some statistical analysis to ensure the output is expected?
 
 \section{Test Results}% 15 marks (1.5 pages)
 %The test results for each of the tests that were specified in item B.
@@ -279,25 +306,25 @@ By constructing a test that ensure the simulation step function works correctly,
 
 %o: screenshots may be useful, but add them in appendix?
 \begin{center}
-\begin{tabular}{|c|c|r|}
+\begin{tabular}{|c|c|c|p{8em}|}
 	\hline
-	\textbf{Test Case} & \textbf{Passed} & \textbf{Description} \\
+	\textbf{Test Case} & \textbf{Passed} & \textbf{Level} & \multicolumn{1}{c|}{\textbf{Description}} \\
 	\hline
-	1 & \textcolor{pass_grn}{\cmark} &\\
+	1 & \textcolor{pass_grn}{\cmark} & Unit & \\
 	\hline
-	2 & \textcolor{fail_red}{\xmark} &\\
+	2 & \textcolor{fail_red}{\xmark} & Unit & \\
 	\hline
-	3 & \textcolor{pass_grn}{\cmark} &\\
+	3 & \textcolor{pass_grn}{\cmark} & Unit & \\
 	\hline
-	4 & \textcolor{pass_grn}{\cmark} &\\
+	4 & \textcolor{pass_grn}{\cmark} & Unit & \\
 	\hline
-	5 & \textcolor{pass_grn}{\cmark} &\\
+	5 & \textcolor{pass_grn}{\cmark} & Unit & \\
 	\hline
-	6 & \textcolor{pass_grn}{\cmark} &\\
+	6 & \textcolor{pass_grn}{\cmark} & Integration & \\
 	\hline
-	7 & \textcolor{pass_grn}{\cmark} &\\
+	7 & \textcolor{pass_grn}{\cmark} & System & \\
 	\hline
-	8 & \textcolor{pass_grn}{\cmark} &\\
+	8 & \textcolor{pass_grn}{\cmark} & System & \\
 	\hline
 \end{tabular}
 \end{center}
@@ -314,7 +341,11 @@ By constructing a test that ensure the simulation step function works correctly,
 		%o: obviously due to time and limitations on the number of test cases, this is a limited assessment
 		%o: but OVERALL..?
 
-The significant limitations of testing resources reduce the level of confidence with which we can say that the software is free from defects.
+The significant limitations of testing resources reduce the level of confidence with which we can say that the software is free from defects. I can assure that the core functionality, including the simulation scheduler works.
+
+%IF any bugs found: despite a very limited number of tests, we have managed to find bugs in the code.
+%This is an indicator that the software may not have been tested as rigorously by the original developer as we would like to think.
+%Raises alarm bells, we should perhaps test further to discover if this is a fluke- or disregard the software as an option.
 
 %Throughout, the summary report should only refer to the test cases that were specified in (B), not any other testing you may have performed.
 
