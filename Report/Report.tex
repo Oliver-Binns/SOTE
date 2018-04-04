@@ -73,16 +73,17 @@ For MASON in particular, it is likely that the software has not been thoroughly 
 %biological simulations- high profile studies have based hypotheses on this framework
 
 \subsubsection{Tools}
-The IntelliJ IDE was used to explore the code and develop automated tests. This IDE gives powerful features, including plugins for generating code metrics, and displaying coverage of unit testing.
+The IntelliJ IDE was used to explore the code and develop automated tests. This IDE gives powerful features, including plugins for generating code metrics and displaying coverage of unit testing.
 JUnit has been used to create automated unit testing for the software.
-Git version control has been used to manage the code for the JUnit tests. For a long term project, this would be particularly advantageous as any automated tests could be updated and versioned alongside any code changes.
+Git version control has been used to manage the code for these JUnit tests.
+For a long term project, this would be particularly advantageous as any automated tests could be updated and versioned alongside any future code changes.
 
 \subsection{Test Coverage}
 \subsubsection{System Overview}
 %Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
 In order to design appropriate test cases an understanding of all levels of the system was needed. As resources here are significantly limited, with only 8 testcases are allowed, it will be necessary to ensure they are used in the most effective way.
 %Clearly define what constitutes "the software under test" and list the features that you will test and not test
-As stated in the project brief, the testing only needs to cover the \texttt{sim.engine}, \texttt{sim.field} and \texttt{sim.field.grid} packages, but not their subpackages:
+As stated in the project brief, the testing only needs to cover the following packages, but not their subpackages:
 
 \begin{itemize}
 \item \texttt{sim.engine} is responsible for the core simulation management, including the agent scheduling.
@@ -146,9 +147,6 @@ GitHub commits are all credited to \textit{eclab} rather than individual develop
 
 
 \subsubsection{Testing Goals}
-%WHAT IS THE ACCEPTABILITY CRITERIA:
-The client needs the software to...
-\\
 %Define acceptability criteria for the software - what (testable) properties does it need to have in order for it to be acceptable quality for its intended purpose?
 %o: These will help define the goals of our testing:
 	%find the maximum number of bugs?
@@ -160,9 +158,17 @@ The client needs the software to...
 	%have a compelling defence in a courtcase (self-driving cars, too soon?)
 	%minimum time and cost?
 		%obviously here we have a set TIME- open assessment for 10 credit module
-There are a number of goals we could define for our testing, such as finding the maximum number of bugs or complying with regulator set demands. The given requirement here is to verify, with a limited number of resources, that the software is dependable.
-In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}. As such, the main requirement for our testing is to find a significant number of undiscovered bugs.
+There are a number of goals we could define for our testing, such as finding the maximum number of bugs or complying with regulator set demands.
+The given requirement here is to verify, with a limited number of resources, that the software is dependable.
+In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}.
+As such, the main requirement for our testing is to find any significant undiscovered bugs in commonly used code.
 \\
+
+Due to limited resources, the tests will aim to cover the parts of the software which are likely to be used more often by the target users.
+MASON is bundled with some demo simulations that give example usages for the library.
+Running these simulations with code coverage detection turned on has given a good overview of which parts of the code are used regularly.
+Core simulation code that is used routinely by all simulations regardless of their customisations should be tested the most rigourously.
+Both the documentation and code coverage checks indicate that this type of code can be found within \texttt{sim.engine}.
 
 \subsubsection{Expected Behaviour}
 %usage by a private biological research institute
@@ -177,7 +183,8 @@ Unit Testing allows the testing of small sections of source code. In this case, 
 \\
 
 Unit testing should focus on core code that is a dependency for other modules, code that regularly gathers bugs and code that is changed by a number of different developers. It should not cover trivial code, such as accessors and mutators, code with non-deterministic results or UI code.\cite{dont_test_blindly}
-
+%Unit Test: sim.engine?
+		   %sim.field.. whichever grid is most relevant to biologists?
 
 Mention Pareto principle again!
 Aim for 60-70\% code coverage of business logic, %has this come from don't test blindly?
@@ -187,8 +194,13 @@ Aim for 60-70\% code coverage of business logic, %has this come from don't test 
 
 \subsubsection{System Testing}
 %TEST THE WHOLE SYSTEM, typically blackbox
+%In this case 'the system is our selected packages'
 
 %Functional, but ALSO non-functional requirements..
+	%non-functional requirements:
+		%basic Java programming?
+		%portability
+		%open source
 
 \subsubsection{Integration Testing}
 %testing interacting classes..
@@ -233,9 +245,28 @@ As such, it will not be possible to run any regression testing as part of the pr
 
 %o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
 %o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
-\subsection{Test Case 1}
-\subsection{Test Case 2}
-\subsection{Test Case 3}
+\subsection{Test Cases 1-3}
+\begin{wrapfigure}{r}{0.4\textwidth} 
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{Appendix/Schedule}
+    \caption{Schedule Class}
+    \label{fig:schedule}
+  \end{center}
+\end{wrapfigure}
+As previously stated, our initial unit testing will focus on the simulation scheduler which provides the core functionality for MASON. This functionality is contained within the Schedule class as shown in Fig. \ref{fig:schedule}. While this class initially appears to be quite large, at closer inspection, many of its methods are simply overloading others, due to Java's lack of real support for default function arguments.
+
+By removing trivial methods (accessors, mutators, overloading methods), we can reduce the class down to:
+\begin{itemize}
+	\item \texttt{getTimestamp}: Returns a given time in string format.
+	\item \texttt{merge}: Merge a given schedule into this one.
+	\item \texttt{step}: Moves the schedule forward by one implementation, skipping empty timesteps.
+	\item \texttt{\_scheduleOnce}: Adds the specified item to the schedule, to occur at the specified timestep.
+	\item \texttt{scheduleRepeating}: Adds the specified item to the schedule, to repeat continously at specified interval.
+\end{itemize}
+
+By constructing a test that ensure the simulation step function works correctly, we will also indirectly test that the schedule method works as expected.
+
+
 \subsection{Test Case 4}
 \subsection{Test Case 5}
 \subsection{Test Case 6}
@@ -305,8 +336,8 @@ The significant limitations of testing resources reduce the level of confidence 
 	\hline
 	\textbf{Package} & \textbf{Lines of Code} \\
 	\hline
-	\texttt{sim.engine} & 444 \\
-	\texttt{sim.field} & 2,961 \\
+	\texttt{sim.engine} & 2,961 \\
+	\texttt{sim.field} & 444 \\
 	\texttt{sim.field.grid} & 10,248 \\
 	\hline
 	\textbf{Total} & 13,653 \\
@@ -395,6 +426,51 @@ The significant limitations of testing resources reduce the level of confidence 
 \includegraphics[width=\textwidth]{Appendix/UML}
 \caption{Reverse Engineered UML diagram of Class Hierarchy}
 \label{fig:uml}
+\end{figure}
+
+\begin{figure}[htp]
+\begin{center}
+\begin{tabular}{|l|l|r|r|r|r|}
+	\hline
+	\multirow{3}{7.5em}{\textbf{Package}} & \multirow{3}{4em}{\textbf{Class}} & \multicolumn{2}{|p{3cm}|}{\textbf{HeatBugs\newline Coverage (\%)}} & \multicolumn{2}{|p{3cm}|}{\textbf{Virus Infection\newline Coverage (\%)}} \\
+	\cline{3-6}
+	&& Method & Line & Method & Line\\
+	\hline
+	\multirow{13}{6em}{\texttt{sim.engine}}
+	& AsynchronousSteppable & & & & \\
+	& IterativeRepeat & 60 & 70 & 60 & 70 \\
+	& MethodStep & & & & \\
+	& MultiStep & & & & \\
+	& ParallelSequence & 38 & 59 & & \\
+	& RandomSequence & & & & \\
+	& Repeat & & & & \\
+	& Schedule & 41 & 51 & 41 & 50 \\
+	& Sequence & 11 & 12 & & \\
+	& SimState & 31 & 18 & 31 & 18 \\
+	& TentativeStep & & & & \\
+	& ThreadPool & 66 & 76 & & \\
+	& WeakStep & & & & \\
+	\hline
+	\texttt{sim.field} & SparseField & 21 & 34 & 21 & 35 \\
+	\hline
+	\multirow{12}{6em}{\texttt{sim.field.grid}} 
+	& AbstractGrid2D & 10 & 1 & & \\
+	& AbstractGrid3D & &  & & \\
+	& DenseGrid2D & & & & \\
+	& DenseGrid3D & & & & \\
+	& DoubleGrid2D & 11 & 7  & & \\
+	& DoubleGrid3D & &  & & \\
+	& IntGrid2D & &  & & \\
+	& IntGrid3D & &  & & \\
+	& ObjectGrid2D & &  & & \\
+	& ObjectGrid3D & &  & & \\
+	& SparseGrid2D & 10 & 2 & & \\
+	& SparseGrid3D & & & & \\
+	\hline
+\end{tabular}
+\end{center}
+\caption{Code Coverage from Demo Simulation Runs}
+\label{fig:coverage_heatbugs}
 \end{figure}
 
 \end{document}
