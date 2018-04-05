@@ -5,6 +5,7 @@
 \usepackage{fancyhdr}
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{graphicx}
+\usepackage{listings}
 \usepackage{multirow}
 \usepackage{pifont}
 \newcommand{\cmark}{\ding{51}}%
@@ -280,7 +281,12 @@ By removing trivial methods (accessors, mutators, overloading methods), we can r
 	\item \texttt{scheduleRepeating}: Adds the specified item to the schedule, to repeat continously at specified interval.
 \end{itemize}
 
-By constructing a test that ensure the simulation \texttt{step} method works correctly, we will also indirectly test that the \texttt{\_scheduleOnce} method works as expected during our setup process. \texttt{\_scheduleOnce} is a private method, so this will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(double, Steppable)}. This is \textbf{Test Case 1}.
+By constructing a test that ensure the simulation \texttt{step} method works correctly, we will also indirectly test that the \texttt{\_scheduleOnce} method works as expected during our setup process.
+\texttt{\_scheduleOnce} is a private method, so this will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(double, Steppable)}.
+This is \textbf{Test Case 1}.
+In order to facilitate this test, a simple \texttt{Increment} class (Fig. \ref{code:increment}) has been created.
+The test will create a new scheduler and add a new instance of this class to it.
+The scheduler will be stepped a number of times to ensure that the \texttt{Increment} value is correctly stepped.
 \\
 
 \textbf{Test Case 2} is similar, but will utilise the \texttt{scheduleRepeating} to ensure that the Schedule correctly manages recurring events.
@@ -446,16 +452,32 @@ The significant limitations of testing resources reduce the level of confidence 
 \end{figure}
 
 \begin{figure}[htp]
+\begin{lstlisting}[language=Java]
+class Increment implements Steppable{
+	private int i = 0;
+
+	@Override
+	public void step(SimState state) {
+		i++;
+	}
+}
+\end{lstlisting}
+
+\caption{Simple Increment class used for Unit Testing}
+\label{code:increment}
+\end{figure}
+
+\begin{figure}[htp]
 \centering
-\includegraphics[width=\textwidth]{Appendix/complexityVchange}
-\caption{Cyclomatic Complexity and Number of File Revisions for classes in Test Scope}
+\includegraphics[width=0.8\textwidth]{Appendix/complexityVchange}
+\caption{Cyclomatic Complexity and Number of File Revisions for classes in test scope}
 \label{fig:complexityVchange}
 \end{figure}
 
 \begin{figure}[htp]
 \centering
 \includegraphics[width=\textwidth]{Appendix/UML}
-\caption{Reverse Engineered UML diagram of Class Hierarchy}
+\caption{UML diagram of hierarchy for classes test scope}
 \label{fig:uml}
 \end{figure}
 

@@ -21,6 +21,7 @@ public class ScheduleTest{
     public void stepTest(){
         schedule.scheduleOnce(0, increment);
 
+        assertEquals("Incrementer is at 0.", increment.i, 0);
         for(int i = 0; i < 10; i++) {
             schedule.step(state);
             assertEquals("Increment has been stepped.", increment.i, 1);
@@ -31,6 +32,7 @@ public class ScheduleTest{
     public void intervalTest(){
         schedule.scheduleRepeating(0, increment, 3.0);
 
+        assertEquals("Incrementer is at 0.", increment.i, 0);
         for(int i = 0; i < 10; i++){
             assertEquals("Adds a repeating event. This event should be called every 3 iterations.", increment.i, i);
             schedule.step(state);
