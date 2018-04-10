@@ -3,6 +3,7 @@
 \definecolor{pass_grn}{RGB}{0, 230, 0}
 \definecolor{fail_red}{RGB}{230, 0, 0}
 \usepackage{fancyhdr}
+\usepackage{adjustbox}
 \usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage{graphicx}
 \usepackage{listings}
@@ -75,6 +76,9 @@ For MASON in particular, it is likely that the software has not been thoroughly 
 
 \subsubsection{Tools}
 The IntelliJ IDE was used to explore the code and develop automated tests. This IDE gives powerful features, including plugins for generating code metrics and displaying coverage of unit testing.
+Specifically, the MetricsReloaded plugin\cite{metrics_reloaded} has been used for generating the statistics in Fig. \ref{tables:metrics}.
+\\
+
 JUnit has been used to create automated unit testing for the software.
 Git version control has been used to manage the code for these JUnit tests.
 For a long term project, this would be particularly advantageous as any automated tests could be updated and versioned alongside any future code changes.
@@ -92,7 +96,7 @@ As stated in the project brief, the testing only needs to cover the following pa
 \item \texttt{sim.field.grid} provides various 2D and 3D grid representations of simulation space.
 \end{itemize}
 
-Each of the Fig. \ref{fig:loc} shows the proportional sizes of each of these three modules.
+Fig. \ref{fig:loc} shows the proportional sizes of each of these three modules, while Fig. \ref{fig:uml} shows their code components.
 \\
 
 It has been shown across software projects that some modules of code may be significantly more error prone than others.
@@ -169,7 +173,12 @@ There are a number of goals we could define for our testing, such as finding the
 The given requirement here is to verify, with a limited number of resources, that the software is dependable.
 In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}.
 As such, the main requirement for our testing is to find any significant undiscovered bugs in commonly used code.
-\\
+%In many projects, most requirements come from inference or implicit specifications
+%if a product violates an explicit spec: "it violates the spec, it is wrong"
+%if a product violates an implicit spec, you have to make a case: "it does this.. which is unexpected, this may confuse users, who do x in their daily work."
+
+%"IT WORKS" means it appears to meet some requirement.. to some degree
+%--ALL FROM \cite{lessons_book}
 
 Due to limited resources, the tests will aim to cover the parts of the software which are likely to be used more often by the target users.
 MASON is bundled with some demo simulations that give example usages for the library.
@@ -185,6 +194,8 @@ The system behaviour has been tested against the inferred requirements of the cl
 %Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
 The expected behaviour of the software has been determined using the extensive MASON documentation\cite{mason_doc}, first-party example implementations as well as a number of open-source examples\cite{ppsim}.
 
+%what IS this expected behaviour: we are able to create and run agent-based simulations?
+
 \subsubsection{Unit Testing}
 Unit Testing allows the testing of small sections of source code. In this case, unit tests will help us to isolate the select packages that are within the scope of testing from the rest of the system.
 \\
@@ -199,19 +210,11 @@ Aim for 60-70\% code coverage of business logic, %has this come from don't test 
 
 %Mutation Testing?
 
-\subsubsection{System Testing}
-%TEST THE WHOLE SYSTEM, typically blackbox
-%In this case 'the system is our selected packages'
-
-%Functional, but ALSO non-functional requirements..
-	%non-functional requirements:
-		%basic Java programming?
-		%portability
-		%open source
-
 \subsubsection{Integration Testing}
 %testing interacting classes..
 	%focus on communication and flow of information between the modules
+
+Java is a heavily object-oriented (OO) language. This will affect our testing as in this type of software, much of the complexity is moved from algorithms in methods, to the connection of software components\cite[pp.236]{introduction_book}. We will therefore need a much greater focus on integration testing than unit testing.
 
 %not fully within the scope of our testing, we have only been asked to test
 	%sim.engine
@@ -226,13 +229,33 @@ Aim for 60-70\% code coverage of business logic, %has this come from don't test 
 	%top down
 	%bottom-up
 
-\subsubsection{Acceptance Testing}
+\subsubsection{System Testing}
+%TEST THE WHOLE SYSTEM, typically blackbox
+%In this case 'the system is our selected packages'
+While testing the system as a whole will not help us find low-level bugs, it should help to produce 
+%functional requirements:
+\\
+
+System testing will also help us to verify the non-functional requirements that have been previously determined.
+In particular, our system testing will cover
+%non-functional requirements:
+	%basic Java programming?
+	%portability
+	%open source
+\\
+
+While the system testing will be conducted using the MASON UI as a black-box test, thus requires functionality provided by classes outside the test scope, the test cases will only cover functionality provided by classes which are in scope.
+
+\paragraph{Acceptance Testing}
+is a particularly useful form of system testing.
 %HELPS ENSURE THE CUSTOMER TRUSTS OUR QUALITY CLAIM
 Acceptance Testing could be performed to determine if the software can be operated effectively by our end users.
-Acceptance testing can be useful for understanding the domain of our software better, but as we are not intending to further develop MASON, this is not particularly relevant here.
+%this is a particularly important non-functional requirement for our software^
+%if it is too complex to be operated by our users, it is no good!
+It can be useful for understanding the domain of our software better, but as we are not intending to further develop MASON, this is not particularly relevant here.
 %Should be meaningful for the customer- performed on potential users
 %-not available as an option due to the requirement to find users...
-Acceptance Testing should be performed ON?/BY? domain experts?- I am NOT a domain expert..
+It should be performed ON?/BY? domain experts?- I am NOT a domain expert..
 \\
 
 While acceptance testing will not help us determine that the software is \textit{dependable}, it would help to discover if it is appropriate for the target audience. In particular, our users have supposedly only received a basic level of Java training. It has been stated that MASON is less-suited to beginner programmers, when compared to other tools, such as NetLogo\cite{abm_platforms_review}.
@@ -245,6 +268,7 @@ Unfortunately neither the website nor the GitHub repository for MASON provide an
 Either this testing has not been done, which is common with freely-distributed software, or it has not been publicly distributed.
 As such, it will not be possible to run any regression testing as part of the project.
 
+\newpage
 \section{Test Case Specifications}% 30 Marks (3 pages)
 %Test case specifications for 8 fully specified test cases. The test cases must be complementary: they must make different assumptions and test different specific features of the library.
 	%At minimum, each test case should describe the stimulus applied to the software (which might be a sequence of API calls, a sequence of user actions that are taken, or something else) and the expected
@@ -282,14 +306,15 @@ By removing trivial methods (accessors, mutators, overloading methods), we can r
 \end{itemize}
 
 By constructing a test that ensure the simulation \texttt{step} method works correctly, we will also indirectly test that the \texttt{\_scheduleOnce} method works as expected during our setup process.
-\texttt{\_scheduleOnce} is a private method, so this will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(double, Steppable)}.
+\texttt{\_scheduleOnce} is a private method, so this will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(Steppable)}.
+Other overload methods could be used instead with little difference on the test as the scheduler skips any empty timesteps.
 This is \textbf{Test Case 1}.
 In order to facilitate this test, a simple \texttt{Increment} class (Fig. \ref{code:increment}) has been created.
 The test will create a new scheduler and add a new instance of this class to it.
-The scheduler will be stepped a number of times to ensure that the \texttt{Increment} value is correctly stepped.
+The scheduler will be stepped a number of times (10) to ensure that the \texttt{Increment} value is correctly stepped.
 \\
 
-\textbf{Test Case 2} is similar, but will utilise the \texttt{scheduleRepeating} to ensure that the Schedule correctly manages recurring events.
+\textbf{Test Case 2} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events. As mentioned, the scheduler skips any empty timesteps, so providing a different start time or time interval will make little difference to the test.
 \\
 
 \textbf{Test Case 3} ...?
@@ -297,6 +322,10 @@ The scheduler will be stepped a number of times to ensure that the \texttt{Incre
 %While limited to select classes.. 
 %These tests achieve a good level of code coverage () over these essential functionality.
 %Having a good understanding of the classes' intentions should ensure that the tests are also meaningful
+
+%Test at the boundaries- more likely to reveal ambiguities in the specification
+%Test ERROR MESSAGES: this code tends to be weaker than mainstream functionality- will be important to guide less-confident users (beginner Java)
+	%:all from \cite{lessons_book}
 
 \subsection{Test Case 4}
 \subsection{Test Case 5}
@@ -306,35 +335,37 @@ The scheduler will be stepped a number of times to ensure that the \texttt{Incre
 %Testing non-deterministic events is hard:
 %We can perform some statistical analysis to ensure the output is expected?
 
+\newpage
 \section{Test Results}% 15 marks (1.5 pages)
 %The test results for each of the tests that were specified in item B.
 	%Here, you should document the results that occurred when the test cases are run. You should provide explicit indication of whether each test passed or failed, and in the latter case state what happened instead.
 
 %o: screenshots may be useful, but add them in appendix?
-\begin{center}
-\begin{tabular}{|c|c|c|p{8em}|}
+\begin{adjustbox}{center}
+\begin{tabular}{|c|c|c|p{10em}|p{10em}|p{10em}|}
 	\hline
-	\textbf{Test Case} & \textbf{Passed} & \textbf{Level} & \multicolumn{1}{c|}{\textbf{Description}} \\
+	\textbf{Case} & \textbf{Pass} & \textbf{Level} & \textbf{Expected} & \textbf{Actual} & \multicolumn{1}{c|}{\textbf{Details}} \\
 	\hline
-	1 & \textcolor{pass_grn}{\cmark} & Unit & \\
+	1 & \textcolor{pass_grn}{\cmark} & Unit & \texttt{i} variable is incremented once, in first simulation step. & \texttt{i} is incremented once, despite the simulation being stepped 10 times. & Behaved as expected, no notable side-effects. \\
 	\hline
-	2 & \textcolor{fail_red}{\xmark} & Unit & \\
+	2 & \textcolor{pass_grn}{\cmark} & Unit & \texttt{i} variable is incremented once for each simulation step. & \texttt{i} is incremented ten times, once at each step. & Behaved as expected, no notable side-effects. \\
 	\hline
-	3 & \textcolor{pass_grn}{\cmark} & Unit & \\
+	3 & \textcolor{pass_grn}{\cmark} & Unit &&& \\
 	\hline
-	4 & \textcolor{pass_grn}{\cmark} & Unit & \\
+	4 & \textcolor{pass_grn}{\cmark} & Integration &&& \\
 	\hline
-	5 & \textcolor{pass_grn}{\cmark} & Unit & \\
+	5 & \textcolor{pass_grn}{\cmark} & Integration &&& \\
 	\hline
-	6 & \textcolor{pass_grn}{\cmark} & Integration & \\
+	6 & \textcolor{pass_grn}{\cmark} & Integration &&& \\
 	\hline
-	7 & \textcolor{pass_grn}{\cmark} & System & \\
+	7 & \textcolor{pass_grn}{\cmark} & System &&& \\
 	\hline
-	8 & \textcolor{pass_grn}{\cmark} & System & \\
+	8 & \textcolor{pass_grn}{\cmark} & System &&& \\
 	\hline
 \end{tabular}
-\end{center}
+\end{adjustbox}
 
+\newpage
 \section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
@@ -353,7 +384,21 @@ The significant limitations of testing resources reduce the level of confidence 
 %This is an indicator that the software may not have been tested as rigorously by the original developer as we would like to think.
 %Raises alarm bells, we should perhaps test further to discover if this is a fluke- or disregard the software as an option.
 
+%defect distribution (module)
+
+%Defect severity:
+%	Critical
+%	Major
+%	Medium
+%	Cosmetic
+
 %Throughout, the summary report should only refer to the test cases that were specified in (B), not any other testing you may have performed.
+
+%recommendations:
+%software should be used, yes/no?
+%further testing required, yes/no?
+	%ACCEPTANCE TESTING- to verify if the software is SUITABLE for users with basic Java programming, as research\cite{abm_platforms_review} suggests otherwise.
+
 
 \newpage
 \raggedright
@@ -475,53 +520,61 @@ class Increment implements Steppable{
 \end{figure}
 
 \begin{figure}[htp]
-\centering
+\begin{subfigure}[b]{\textwidth}
 \includegraphics[width=\textwidth]{Appendix/UML}
-\caption{UML diagram of hierarchy for classes test scope}
+\end{subfigure}
+\begin{subfigure}[b]{\textwidth}
+\includegraphics[width=\textwidth]{Appendix/UML_fields}
+\end{subfigure}
+\caption{UML diagrams of hierarchy for classes in the test scope\cite{mason_uml}}
 \label{fig:uml}
 \end{figure}
 
 \begin{figure}[htp]
-\begin{center}
-\begin{tabular}{|l|l|r|r|r|r|}
+
+\begin{adjustbox}{center}
+\begin{tabular}{|l|l|r|r|r|r|r|r|}
 	\hline
-	\multirow{3}{7.5em}{\textbf{Package}} & \multirow{3}{4em}{\textbf{Class}} & \multicolumn{2}{|p{3cm}|}{\textbf{HeatBugs\newline Coverage (\%)}} & \multicolumn{2}{|p{3cm}|}{\textbf{Virus Infection\newline Coverage (\%)}} \\
-	\cline{3-6}
-	&& Method & Line & Method & Line\\
+	\multirow{3}{7.5em}{\textbf{Package}} & \multirow{3}{4em}{\textbf{Class}}
+	& \multicolumn{2}{|p{3cm}|}{\textbf{HeatBugs\newline Coverage (\%)}}
+	& \multicolumn{2}{|p{3cm}|}{\textbf{Virus Infection\newline Coverage (\%)}}
+	& \multicolumn{2}{|p{3cm}|}{\textbf{Mouse Traps\newline Coverage (\%)}} \\
+	\cline{3-8}
+	&& Method & Line & Method & Line & Method & Line \\
 	\hline
 	\multirow{13}{6em}{\texttt{sim.engine}}
-	& AsynchronousSteppable & & & & \\
-	& IterativeRepeat & 60 & 70 & 60 & 70 \\
-	& MethodStep & & & & \\
-	& MultiStep & & & & \\
-	& ParallelSequence & 38 & 59 & & \\
-	& RandomSequence & & & & \\
-	& Repeat & & & & \\
-	& Schedule & 41 & 51 & 41 & 50 \\
-	& Sequence & 11 & 12 & & \\
-	& SimState & 31 & 18 & 31 & 18 \\
-	& TentativeStep & & & & \\
-	& ThreadPool & 66 & 76 & & \\
-	& WeakStep & & & & \\
+	& AsynchronousSteppable & & & & & & \\
+	& IterativeRepeat & 60 & 70 & 60 & 70 & & \\
+	& MethodStep & & & & & & \\
+	& MultiStep & & & & & & \\
+	& ParallelSequence & 38 & 59 & & & & \\
+	& RandomSequence & & & & & & \\
+	& Repeat & & & & & & \\
+	& Schedule & 41 & 51 & 41 & 50 & 35 & 46 \\
+	& Sequence & 11 & 12 & & & &\\
+	& SimState & 31 & 18 & 31 & 18 & 31 & 18 \\
+	& TentativeStep & & & & & & \\
+	& ThreadPool & 66 & 76 & & & & \\
+	& WeakStep & & & & & & \\
 	\hline
-	\texttt{sim.field} & SparseField & 21 & 34 & 21 & 35 \\
+	\texttt{sim.field} & SparseField & 21 & 34 & 21 & 35 & & \\
 	\hline
 	\multirow{12}{6em}{\texttt{sim.field.grid}} 
-	& AbstractGrid2D & 10 & 1 & & \\
-	& AbstractGrid3D & &  & & \\
-	& DenseGrid2D & & & & \\
-	& DenseGrid3D & & & & \\
-	& DoubleGrid2D & 11 & 7  & & \\
-	& DoubleGrid3D & &  & & \\
-	& IntGrid2D & &  & & \\
-	& IntGrid3D & &  & & \\
-	& ObjectGrid2D & &  & & \\
-	& ObjectGrid3D & &  & & \\
-	& SparseGrid2D & 10 & 2 & & \\
-	& SparseGrid3D & & & & \\
+	& AbstractGrid2D & 10 & 1 & & & 5 & 0 \\
+	& AbstractGrid3D & & & & & & \\
+	& DenseGrid2D & & & & & & \\
+	& DenseGrid3D & & & & & & \\
+	& DoubleGrid2D & 11 & 7  & & & & \\
+	& DoubleGrid3D & & & & & & \\
+	& IntGrid2D & & & & & 17 & 10 \\
+	& IntGrid3D & & & & & & \\
+	& ObjectGrid2D & & & & & & \\
+	& ObjectGrid3D & & & & & & \\
+	& SparseGrid2D & 10 & 2 & & & & \\
+	& SparseGrid3D & & & & & & \\
 	\hline
 \end{tabular}
-\end{center}
+\end{adjustbox}
 \caption{Code Coverage from Demo Simulation Runs}
 \label{fig:coverage_heatbugs}
 \end{figure}

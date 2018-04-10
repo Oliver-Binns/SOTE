@@ -19,7 +19,7 @@ public class ScheduleTest{
 
     @Test
     public void stepTest(){
-        schedule.scheduleOnce(0, increment);
+        schedule.scheduleOnce(increment);
 
         assertEquals("Incrementer is at 0.", increment.i, 0);
         for(int i = 0; i < 10; i++) {
