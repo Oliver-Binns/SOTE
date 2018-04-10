@@ -79,7 +79,7 @@ The IntelliJ IDE was used to explore the code and develop automated tests. This 
 Specifically, the MetricsReloaded plugin\cite{metrics_reloaded} has been used for generating the statistics in Fig. \ref{tables:metrics}.
 \\
 
-JUnit has been used to create automated unit testing for the software.
+JUnit has been used to create automated testing for the software, this includes both unit and integration testing.
 Git version control has been used to manage the code for these JUnit tests.
 For a long term project, this would be particularly advantageous as any automated tests could be updated and versioned alongside any future code changes.
 
@@ -184,7 +184,9 @@ Due to limited resources, the tests will aim to cover the parts of the software 
 MASON is bundled with some demo simulations that give example usages for the library.
 Running these simulations with code coverage detection turned on has given a good overview of which parts of the code are used regularly (Fig. \ref{fig:coverage_heatbugs}).
 Core simulation code that is used routinely by all simulations regardless of their customisations should be tested the most rigourously.
-Both the documentation and code coverage checks indicate that this type of code can be found within \texttt{sim.engine}.
+Both the documentation\cite[pp.85]{mason_doc} and code coverage checks indicate that this type of code can be found within \texttt{sim.engine}.
+
+%TODO: THE SYSTEM WILL BE ACCEPTABLE : IF
 
 \subsubsection{Expected Behaviour}
 %usage by a private biological research institute
@@ -192,21 +194,26 @@ Both the documentation and code coverage checks indicate that this type of code 
 The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
 
 %Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
-The expected behaviour of the software has been determined using the extensive MASON documentation\cite{mason_doc}, first-party example implementations as well as a number of open-source examples\cite{ppsim}.
+The expected behaviour of the software has been determined using the extensive MASON documentation\cite{mason_doc} and first-party example implementations.
+%move this to testing goals?-->
+The brief has not provided any specific use cases for the software, so the tests cannot be easily targeted at the end-user's specific needs.
 
 %what IS this expected behaviour: we are able to create and run agent-based simulations?
 
 \subsubsection{Unit Testing}
-Unit Testing allows the testing of small sections of source code. In this case, unit tests will help us to isolate the select packages that are within the scope of testing from the rest of the system.
+Unit Testing allows the testing of small sections of source code.
+In this case, unit tests will help us to isolate the select packages that are within the scope of testing from the rest of the system.
 \\
 
-Unit testing should focus on core code that is a dependency for other modules, code that regularly gathers bugs and code that is changed by a number of different developers. It should not cover trivial code, such as accessors and mutators, code with non-deterministic results or UI code.\cite{dont_test_blindly}
+Unit testing should focus on core code that is a dependency for other modules, code that regularly gathers bugs and code that is changed by a number of different developers.
+It should not cover trivial code, such as accessors and mutators, code with non-deterministic results or UI code.\cite{dont_test_blindly}
+In this case, we will target our unit testing at ensuring the core software functionality is correct, specifically that simulations can be created and run.
 %Unit Test: sim.engine?
 		   %sim.field.. whichever grid is most relevant to biologists?
+\\
 
-Mention Pareto principle again!
-Aim for 60-70\% code coverage of business logic, %has this come from don't test blindly?
-\textasciitilde 20\% of the overall application.
+As previously mentioned, it has been shown that approximately 20\% of the code, contains 80\% of our program's bugs.
+Our unit testing will aim for 60-70\% code coverage of core code and \textasciitilde 20\% of the overall application, as recommended in \cite{dont_test_blindly}.
 
 %Mutation Testing?
 
@@ -230,10 +237,10 @@ Java is a heavily object-oriented (OO) language. This will affect our testing as
 	%bottom-up
 
 \subsubsection{System Testing}
-%TEST THE WHOLE SYSTEM, typically blackbox
 %In this case 'the system is our selected packages'
-While testing the system as a whole will not help us find low-level bugs, it should help to produce 
-%functional requirements:
+While testing the system as a whole will not help us find low-level bugs, it will give a high-level view of whether the bulk of the functionality appears to work as expected.
+System testing of the application will be conducted using the MASON UI as a black-box test. As such, although the test relies on functionality provided by classes outside the test scope, the test cases will only attempt to verify functionality provided by classes which are in scope.
+%what functional requirements are under test:
 \\
 
 System testing will also help us to verify the non-functional requirements that have been previously determined.
@@ -242,9 +249,6 @@ In particular, our system testing will cover
 	%basic Java programming?
 	%portability
 	%open source
-\\
-
-While the system testing will be conducted using the MASON UI as a black-box test, thus requires functionality provided by classes outside the test scope, the test cases will only cover functionality provided by classes which are in scope.
 
 \paragraph{Acceptance Testing}
 is a particularly useful form of system testing.
@@ -284,41 +288,7 @@ As such, it will not be possible to run any regression testing as part of the pr
 
 %o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
 %o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
-\subsection{Test Cases 1-3}
-\begin{wrapfigure}[14]{r}{0.4\textwidth} 
-	\vspace{-25pt}
-	\begin{center}
-		\includegraphics[width=0.4\textwidth]{Appendix/Schedule}
-		\caption{Schedule Class}
-		\label{fig:schedule}
-	\end{center}
-\end{wrapfigure}
-As previously stated, our initial unit testing will focus on the simulation scheduler which provides the core functionality for MASON. This functionality is contained within the Schedule class as shown in Fig. \ref{fig:schedule}. While this class initially appears to be quite large, at closer inspection, many of its methods are simply overloading others, due to Java's lack of real support for default function arguments.
-\\
-
-By removing trivial methods (accessors, mutators, overloading methods), we can reduce the class down to:
-\begin{itemize}
-	\item \texttt{getTimestamp}: Returns a given time in string format.
-	\item \texttt{merge}: Merge a given schedule into this one.
-	\item \texttt{step}: Moves the schedule forward by one implementation, skipping empty timesteps.
-	\item \texttt{\_scheduleOnce}: Adds the specified item to the schedule, to occur at the specified timestep.
-	\item \texttt{scheduleRepeating}: Adds the specified item to the schedule, to repeat continously at specified interval.
-\end{itemize}
-
-By constructing a test that ensure the simulation \texttt{step} method works correctly, we will also indirectly test that the \texttt{\_scheduleOnce} method works as expected during our setup process.
-\texttt{\_scheduleOnce} is a private method, so this will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(Steppable)}.
-Other overload methods could be used instead with little difference on the test as the scheduler skips any empty timesteps.
-This is \textbf{Test Case 1}.
-In order to facilitate this test, a simple \texttt{Increment} class (Fig. \ref{code:increment}) has been created.
-The test will create a new scheduler and add a new instance of this class to it.
-The scheduler will be stepped a number of times (10) to ensure that the \texttt{Increment} value is correctly stepped.
-\\
-
-\textbf{Test Case 2} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events. As mentioned, the scheduler skips any empty timesteps, so providing a different start time or time interval will make little difference to the test.
-\\
-
-\textbf{Test Case 3} ...?
-\\
+\subsection{Test Case 1}
 %While limited to select classes.. 
 %These tests achieve a good level of code coverage () over these essential functionality.
 %Having a good understanding of the classes' intentions should ensure that the tests are also meaningful
@@ -326,8 +296,38 @@ The scheduler will be stepped a number of times (10) to ensure that the \texttt{
 %Test at the boundaries- more likely to reveal ambiguities in the specification
 %Test ERROR MESSAGES: this code tends to be weaker than mainstream functionality- will be important to guide less-confident users (beginner Java)
 	%:all from \cite{lessons_book}
+\subsection{Test Case 2}
 
-\subsection{Test Case 4}
+\subsection{Test Cases 3-4}
+\begin{wrapfigure}[22]{r}{0.4\textwidth} 
+	\vspace{-25pt}
+	\begin{center}
+		\includegraphics[width=0.4\textwidth]{Appendix/Schedule}
+		\caption{Schedule Class}
+		\label{fig:schedule}
+	\end{center}
+\end{wrapfigure}
+
+As previously stated, our initial integration testing will focus on the simulation scheduler which provides the core functionality for MASON.
+This scheduler works with the \texttt{SimState} class and custom implementations of the \texttt{Steppable} interface to provide the functionality that simulates the passing of time.
+\\
+
+While this integration between classes may appear to be complex at first glance, with numerous methods available (Fig. \ref{fig:schedule}), many of its methods are simply overloads,  due to Java's lack of real support for default function arguments.
+Testing a single example of \texttt{scheduleOnce} function, will provide a reasonable assurance that the functionality works, as code is shared with each overloaded instance calling the private \texttt{\_scheduleOnce} method.
+\\
+
+\textbf{Test Case 1} will add a \texttt{Steppable} object to the \texttt{Schedule} and ensure that the \texttt{step} method work as expected.
+A by-product of this test, is the assurance that the \texttt{\_scheduleOnce} method also works as expected.
+As \texttt{\_scheduleOnce} is a private method, it will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(Steppable)}.
+Other overloading methods could be used instead with no difference on the test case as the scheduler skips any empty timesteps.
+In order to facilitate this test, a simple \texttt{Increment} class (Fig. \ref{code:increment}) has been created.
+The scheduler will be stepped a number of times (10) to ensure that the \texttt{Increment} value is correctly stepped.
+\\
+
+\textbf{Test Case 2} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events.
+As mentioned, the scheduler skips any empty timesteps, so providing a different start time or time interval will make little difference to the test.
+\\
+
 \subsection{Test Case 5}
 \subsection{Test Case 6}
 \subsection{Test Case 7}
@@ -346,19 +346,19 @@ The scheduler will be stepped a number of times (10) to ensure that the \texttt{
 	\hline
 	\textbf{Case} & \textbf{Pass} & \textbf{Level} & \textbf{Expected} & \textbf{Actual} & \multicolumn{1}{c|}{\textbf{Details}} \\
 	\hline
-	1 & \textcolor{pass_grn}{\cmark} & Unit & \texttt{i} variable is incremented once, in first simulation step. & \texttt{i} is incremented once, despite the simulation being stepped 10 times. & Behaved as expected, no notable side-effects. \\
+	1 & \textcolor{pass_grn}{\cmark} & Unit &&& \\
 	\hline
-	2 & \textcolor{pass_grn}{\cmark} & Unit & \texttt{i} variable is incremented once for each simulation step. & \texttt{i} is incremented ten times, once at each step. & Behaved as expected, no notable side-effects. \\
+	2 & \textcolor{pass_grn}{\cmark} & Unit &&& \\
 	\hline
-	3 & \textcolor{pass_grn}{\cmark} & Unit &&& \\
+	3 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once, in first simulation step. & \texttt{i} is incremented once, despite the simulation being stepped 10 times. & Behaved as expected, no notable side-effects. \\
 	\hline
-	4 & \textcolor{pass_grn}{\cmark} & Integration &&& \\
+	4 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once for each simulation step. & \texttt{i} is incremented ten times, once at each step. & Behaved as expected, no notable side-effects. \\
 	\hline
-	5 & \textcolor{pass_grn}{\cmark} & Integration &&& \\
+	5 & \textcolor{pass_grn}{\cmark} & Integration &  & & \\
 	\hline
 	6 & \textcolor{pass_grn}{\cmark} & Integration &&& \\
 	\hline
-	7 & \textcolor{pass_grn}{\cmark} & System &&& \\
+	7 & \textcolor{fail_red}{\xmark} & System & The simulation runs and stops after 200,000 steps. & The simulation is run, but does not stop. & \\
 	\hline
 	8 & \textcolor{pass_grn}{\cmark} & System &&& \\
 	\hline
@@ -537,40 +537,40 @@ class Increment implements Steppable{
 	\hline
 	\multirow{3}{7.5em}{\textbf{Package}} & \multirow{3}{4em}{\textbf{Class}}
 	& \multicolumn{2}{|p{3cm}|}{\textbf{HeatBugs\newline Coverage (\%)}}
-	& \multicolumn{2}{|p{3cm}|}{\textbf{Virus Infection\newline Coverage (\%)}}
+	& \multicolumn{2}{|p{3cm}|}{\textbf{Tutorial 4\newline Coverage (\%)}}
 	& \multicolumn{2}{|p{3cm}|}{\textbf{Mouse Traps\newline Coverage (\%)}} \\
 	\cline{3-8}
 	&& Method & Line & Method & Line & Method & Line \\
 	\hline
 	\multirow{13}{6em}{\texttt{sim.engine}}
 	& AsynchronousSteppable & & & & & & \\
-	& IterativeRepeat & 60 & 70 & 60 & 70 & & \\
+	& IterativeRepeat & 60 & 70 & 60 & 71 & & \\
 	& MethodStep & & & & & & \\
 	& MultiStep & & & & & & \\
 	& ParallelSequence & 38 & 59 & & & & \\
 	& RandomSequence & & & & & & \\
 	& Repeat & & & & & & \\
-	& Schedule & 41 & 51 & 41 & 50 & 35 & 46 \\
+	& Schedule & 41 & 51 & 38 & 49 & 35 & 46 \\
 	& Sequence & 11 & 12 & & & &\\
-	& SimState & 31 & 18 & 31 & 18 & 31 & 18 \\
+	& SimState & 31 & 18 & 55 & 48 & 31 & 18 \\
 	& TentativeStep & & & & & & \\
 	& ThreadPool & 66 & 76 & & & & \\
 	& WeakStep & & & & & & \\
 	\hline
-	\texttt{sim.field} & SparseField & 21 & 34 & 21 & 35 & & \\
+	\texttt{sim.field} & SparseField & 21 & 34 & 24 & 37 & & \\
 	\hline
 	\multirow{12}{6em}{\texttt{sim.field.grid}} 
-	& AbstractGrid2D & 10 & 1 & & & 5 & 0 \\
+	& AbstractGrid2D & 10 & 1 & 5 & 0 & 5 & 0 \\
 	& AbstractGrid3D & & & & & & \\
 	& DenseGrid2D & & & & & & \\
 	& DenseGrid3D & & & & & & \\
-	& DoubleGrid2D & 11 & 7  & & & & \\
+	& DoubleGrid2D & 11 & 7 & 7 & 5 & & \\
 	& DoubleGrid3D & & & & & & \\
 	& IntGrid2D & & & & & 17 & 10 \\
 	& IntGrid3D & & & & & & \\
 	& ObjectGrid2D & & & & & & \\
 	& ObjectGrid3D & & & & & & \\
-	& SparseGrid2D & 10 & 2 & & & & \\
+	& SparseGrid2D & 10 & 2 & 4 & 1 & & \\
 	& SparseGrid3D & & & & & & \\
 	\hline
 \end{tabular}
