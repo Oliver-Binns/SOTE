@@ -70,12 +70,13 @@ The software fits into the category of shrinkwrap meaning it might be in use in 
 	%only "fun" things are done
 	%i.e. NOT TESTING
 For MASON in particular, it is likely that the software has not been thoroughly tested as there is no trace of any automated testing, either on the MASON website, or its GitHub repository.
-
+This report documents testing of the latest version (19.0) of MASON, with the aim to discover whether this software is dependable.
 %usage statistics can provide with an estimate of how well it needs to work
 %biological simulations- high profile studies have based hypotheses on this framework
 
 \subsubsection{Tools}
-The IntelliJ IDE was used to explore the code and develop automated tests. This IDE gives powerful features, including plugins for generating code metrics and displaying coverage of unit testing.
+The IntelliJ IDE was used to explore the code and develop automated tests.
+This IDE gives powerful features, including plugins for generating code metrics and displaying coverage of unit testing.
 Specifically, the MetricsReloaded plugin\cite{metrics_reloaded} has been used for generating the statistics in Fig. \ref{tables:metrics}.
 \\
 
@@ -96,37 +97,32 @@ As stated in the project brief, the testing only needs to cover the following pa
 \item \texttt{sim.field.grid} provides various 2D and 3D grid representations of simulation space.
 \end{itemize}
 
-Fig. \ref{fig:loc} shows the proportional sizes of each of these three modules, while Fig. \ref{fig:uml} shows their code components.
+Fig. \ref{fig:loc} shows the proportional sizes of each of these three modules, while Fig. \ref{fig:uml} shows their code components. 
 \\
 
 It has been shown across software projects that some modules of code may be significantly more error prone than others.
 The Pareto principle is said to hold with software bugs, with 80\% of software bugs being found within 20\% of the code\cite[pp. 124]{pressman}.
 We can use a variety of metrics about our software to predict which parts of the code that these bugs may be hiding in\cite{predicting_from_history}.
+Unfortunately, a number of these metrics, including a history of bugs are not publicly available.
 \\
 
 %Complexity:
 High cyclomatic complexity (Fig. \ref{fig:cc}/Fig. \ref{table:cc}) can be a good indicator of the most bug-ridden sections of applications.
 The causality here can be easily understood: complexity creates confusion which results in developers misunderstanding the software they are trying to build.
 This misunderstanding can provoke a large number of bugs in the code.
-The graphs show that \texttt{sim.field.grid} has a slightly higher share of the code's complexity than lines of code, this should be investigated in further detail.
+The graphs show that \texttt{sim.field.grid} has a slightly higher share of the code's complexity than lines of code.
 %FIND GRAPH THAT SHOWS DISPROPORTIONATE COMPLEXITY BETWEEN sim.field.grid classes!
+If we investigate this metric in further detail, it becomes clear that the majority of the more complex classes are in the \texttt{sim.field.grid} package.
+This metric has been plotted against the number of changes that have been committed to the class' source file.
+Files which are subject to frequent change have had more opportunity to develop additional bugs, therefore files with high complexity and frequent changes are particularly worrying and should be looked at.
 \\
 
 %Dependency:
-Fig. \ref{table:dependency} shows how the packages in the test scope interact with other packages in the system. In particular, \texttt{sim.engine} is relied on by a large number of packages.
-%IntelliJ's Diagram feature helped to show how different components of the system are connected.
+Fig. \ref{table:dependency} shows how the packages in the test scope interact with other packages in the system.
+In particular, \texttt{sim.engine} is directly relied upon by a large number of other packages.
 %Code Coverage during simulation/runtime?
-Code coverage has provided a good understanding of which parts of the [code] are regularly used while running the software.
-%Code changes:
-How often different source files have changes is also a particularly useful metric. Files which are subject to frequent change have had more opportunity to develop additional bugs.
-%Plot cyclomatic complexity against loc for files?
-%files which score high on this are likely to contain bugs- SHOULD BE REFACTORED
-\\
-
-%Unavailable?
-Producing the right metrics to help test the application have been particularly difficult in this case.
-No real history of previous bug tracking
-GitHub commits are all credited to \textit{eclab} rather than individual developers
+Additionally, code coverage (Fig. \ref{fig:coverage_heatbugs}) has provided a good understanding of which parts of the software are regularly used while running simulations.
+Again \texttt{sim.engine} appears to be heavily used by the demo simulations.
 \\
 
 \begin{figure}
@@ -200,6 +196,8 @@ The brief has not provided any specific use cases for the software, so the tests
 
 %what IS this expected behaviour: we are able to create and run agent-based simulations?
 
+%MENTION CONFLICTING STATEMENTS IN THE DOC
+
 \subsubsection{Unit Testing}
 Unit Testing allows the testing of small sections of source code.
 In this case, unit tests will help us to isolate the select packages that are within the scope of testing from the rest of the system.
@@ -214,8 +212,6 @@ In this case, we will target our unit testing at ensuring the core software func
 
 As previously mentioned, it has been shown that approximately 20\% of the code, contains 80\% of our program's bugs.
 Our unit testing will aim for 60-70\% code coverage of core code and \textasciitilde 20\% of the overall application, as recommended in \cite{dont_test_blindly}.
-
-%Mutation Testing?
 
 \subsubsection{Integration Testing}
 %testing interacting classes..
@@ -251,21 +247,21 @@ In particular, our system testing will cover
 	%open source
 
 \paragraph{Acceptance Testing}
-is a particularly useful form of system testing.
-%HELPS ENSURE THE CUSTOMER TRUSTS OUR QUALITY CLAIM
-Acceptance Testing could be performed to determine if the software can be operated effectively by our end users.
-%this is a particularly important non-functional requirement for our software^
-%if it is too complex to be operated by our users, it is no good!
+is a particularly useful form of system testing, which can be used for verifying non-functional requirements.
 It can be useful for understanding the domain of our software better, but as we are not intending to further develop MASON, this is not particularly relevant here.
-%Should be meaningful for the customer- performed on potential users
-%-not available as an option due to the requirement to find users...
-It should be performed ON?/BY? domain experts?- I am NOT a domain expert..
+%HELPS ENSURE THE CUSTOMER TRUSTS OUR QUALITY CLAIM
+However, it would helpful to discover if it is appropriate for the target audience.
+A particularly important non-functional requirement of our software is that it can be operated effectively by our end users.
+In particular, our users have supposedly only received a basic level of Java training.
+It has been stated that MASON is less-suited to beginner programmers, when compared to other tools, such as NetLogo\cite{abm_platforms_review}.
 \\
 
-While acceptance testing will not help us determine that the software is \textit{dependable}, it would help to discover if it is appropriate for the target audience. In particular, our users have supposedly only received a basic level of Java training. It has been stated that MASON is less-suited to beginner programmers, when compared to other tools, such as NetLogo\cite{abm_platforms_review}.
-%BUT NOT PART OF OUR BRIEF, this will be done in a later stage once we decide if the tool is free from defects
+In order for acceptance testing to be meaningful, it should be performed on potential users.
+Unfortunately, this means that this type of testing is out of reach for this report as target users are unavailable.
 
-%modules in question, aren't directly accessible to the user?
+\subsubsection{Mutation Testing}
+Mutation testing is often used to determine the effectiveness of a test-set at discovering bugs in the system.
+As we already have a very limited number of tests, mutation testing will not be used.
 
 \subsubsection{Regression Testing}
 Unfortunately neither the website nor the GitHub repository for MASON provide any previously implemented automated testing.
@@ -316,7 +312,7 @@ While this integration between classes may appear to be complex at first glance,
 Testing a single example of \texttt{scheduleOnce} function, will provide a reasonable assurance that the functionality works, as code is shared with each overloaded instance calling the private \texttt{\_scheduleOnce} method.
 \\
 
-\textbf{Test Case 1} will add a \texttt{Steppable} object to the \texttt{Schedule} and ensure that the \texttt{step} method work as expected.
+\textbf{Test Case 3} will add a \texttt{Steppable} object to the \texttt{Schedule} and ensure that the \texttt{step} method work as expected.
 A by-product of this test, is the assurance that the \texttt{\_scheduleOnce} method also works as expected.
 As \texttt{\_scheduleOnce} is a private method, it will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(Steppable)}.
 Other overloading methods could be used instead with no difference on the test case as the scheduler skips any empty timesteps.
@@ -324,16 +320,23 @@ In order to facilitate this test, a simple \texttt{Increment} class (Fig. \ref{c
 The scheduler will be stepped a number of times (10) to ensure that the \texttt{Increment} value is correctly stepped.
 \\
 
-\textbf{Test Case 2} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events.
+\textbf{Test Case 4} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events.
 As mentioned, the scheduler skips any empty timesteps, so providing a different start time or time interval will make little difference to the test.
+Again, the scheduler will be stepped a number of times (10) to ensure that the value is stepped multiple times as expected.
 \\
 
 \subsection{Test Case 5}
 \subsection{Test Case 6}
 \subsection{Test Case 7}
+This test case will verify that the tool is able to run from the command-line, correctly reacting to user configurations.
+The example simulation will be run for a specified number of 
+\\
+The documentation here is conflicting. On Page 91, the \texttt{-time} argument specifies that it will `print a timestamp every T simulation steps' whereas page 19 states that the argument means the simulation will `run for a limited time', behaviour that 19 attributes to the \texttt{-until} argument.
+
 \subsection{Test Case 8}
 %Testing non-deterministic events is hard:
 %We can perform some statistical analysis to ensure the output is expected?
+This test case will verify that the tool works as expected from the User Interface.
 
 \newpage
 \section{Test Results}% 15 marks (1.5 pages)
@@ -346,19 +349,19 @@ As mentioned, the scheduler skips any empty timesteps, so providing a different 
 	\hline
 	\textbf{Case} & \textbf{Pass} & \textbf{Level} & \textbf{Expected} & \textbf{Actual} & \multicolumn{1}{c|}{\textbf{Details}} \\
 	\hline
-	1 & \textcolor{pass_grn}{\cmark} & Unit &&& \\
+	1 & \textcolor{pass_grn}{\cmark} & Unit &  &  & \\
 	\hline
-	2 & \textcolor{pass_grn}{\cmark} & Unit &&& \\
+	2 & \textcolor{pass_grn}{\cmark} & Unit &  &  & \\
 	\hline
-	3 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once, in first simulation step. & \texttt{i} is incremented once, despite the simulation being stepped 10 times. & Behaved as expected, no notable side-effects. \\
+	3 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once, in first simulation step. & \textit{As Expected} & N/A\\
 	\hline
-	4 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once for each simulation step. & \texttt{i} is incremented ten times, once at each step. & Behaved as expected, no notable side-effects. \\
+	4 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once for each simulation step. & \textit{As Expected} & N/A \\
 	\hline
 	5 & \textcolor{pass_grn}{\cmark} & Integration &  & & \\
 	\hline
-	6 & \textcolor{pass_grn}{\cmark} & Integration &&& \\
+	6 & \textcolor{pass_grn}{\cmark} & Integration &  &  &  \\
 	\hline
-	7 & \textcolor{fail_red}{\xmark} & System & The simulation runs and stops after 200,000 steps. & The simulation is run, but does not stop. & \\
+	7 & \textcolor{fail_red}{\cmark} & System & The simulation runs and stops after 200,000 steps. & The simulation is run, but does not stop. It does not appear to react to any command-line arguments. & \\
 	\hline
 	8 & \textcolor{pass_grn}{\cmark} & System &&& \\
 	\hline
@@ -369,36 +372,44 @@ As mentioned, the scheduler skips any empty timesteps, so providing a different 
 \section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
+A wide spectrum of testing has been performed at all levels of the software.
+\\
+
 	%a summary of the results you observed, including a classification of the faults found (by an appropriate classification scheme of your choosing)
+	%Defect severity:
+	%	Critical
+	%	Major
+	%	Medium
+	%	Cosmetic
+Despite the limited resources, a number of bugs in the code have been detected.
+This is an indicator that the software may not have been tested as rigorously as could be expected.
+
+Test Case 7 covers a case which conflicts in the documentation.
+%IF any bugs found: despite a very limited number of tests, we have managed to find bugs in the code.
+%This is an indicator that the software may not have been tested as rigorously by the original developer as we would like to think.
+%Raises alarm bells, we should perhaps test further to discover if this is a fluke- or disregard the software as an option.
+\\
+
 	%an overall evaluation of the thoroughness and quality of the testing you have performed
 		%o: code coverage results for unit testing?
 		%This should be in terms of what might be possible given substantial resources, not in terms of what is possible in a project with this time allocation and maximum report length.
 		%Describe the branch coverage and condition coverage, or the mutation score according to a reasonable mutation testing approach, that your tests achieved of the Java code (not of any other artefact). Briefly explain how you did it; make sure you state what tools you used and (where applicable) what mutation operators you used.
+The significant limitations of testing resources reduce the level of confidence with which we can say that the software is free from defects.
+I can assure that the core functionality, including the simulation scheduler works.
+
+The automated testing have achieved a code coverage of 
 	%an overall evaluation of the software tested (in terms of its freedom from faults)
 		%o: obviously due to time and limitations on the number of test cases, this is a limited assessment
 		%o: but OVERALL..?
+\\
 
-The significant limitations of testing resources reduce the level of confidence with which we can say that the software is free from defects. I can assure that the core functionality, including the simulation scheduler works.
 
-%IF any bugs found: despite a very limited number of tests, we have managed to find bugs in the code.
-%This is an indicator that the software may not have been tested as rigorously by the original developer as we would like to think.
-%Raises alarm bells, we should perhaps test further to discover if this is a fluke- or disregard the software as an option.
-
-%defect distribution (module)
-
-%Defect severity:
-%	Critical
-%	Major
-%	Medium
-%	Cosmetic
 
 %Throughout, the summary report should only refer to the test cases that were specified in (B), not any other testing you may have performed.
-
-%recommendations:
-%software should be used, yes/no?
-%further testing required, yes/no?
-	%ACCEPTANCE TESTING- to verify if the software is SUITABLE for users with basic Java programming, as research\cite{abm_platforms_review} suggests otherwise.
-
+The MASON package seems to broadly function as expected, with the discovered faults having minimal impact on the core functionality of being able to produce and run agent-based simulations.
+None of the defects that have been discovered give any real reason to discount MASON as the package of choice for the simulation developers.
+However, before it is adopted, I recommend that a reasonable amount of acceptance testing is performed with a group of end users from the company.
+This will help to verify if the software is suitable for users with basic Java programming, as research\cite{abm_platforms_review} has suggested otherwise.
 
 \newpage
 \raggedright
