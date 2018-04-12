@@ -169,6 +169,7 @@ There are a number of goals we could define for our testing, such as finding the
 The given requirement here is to verify, with a limited number of resources, that the software is dependable.
 In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}.
 As such, the main requirement for our testing is to find any significant undiscovered bugs in commonly used code.
+\\
 %In many projects, most requirements come from inference or implicit specifications
 %if a product violates an explicit spec: "it violates the spec, it is wrong"
 %if a product violates an implicit spec, you have to make a case: "it does this.. which is unexpected, this may confuse users, who do x in their daily work."
@@ -177,7 +178,12 @@ As such, the main requirement for our testing is to find any significant undisco
 %--ALL FROM \cite{lessons_book}
 
 Due to limited resources, the tests will aim to cover the parts of the software which are likely to be used more often by the target users.
-MASON is bundled with some demo simulations that give example usages for the library.
+In this case, our target users are the staff of a private biological research institute.
+The brief has not provided any specific use cases for the software, so this aim will not be trivial to accomplish.
+Previous biological implementations which utilised MASON\cite{ppsim} have been used to gain an insight into which MASON features are important to biological simulations.
+\\
+
+Additionally I have assumed that MASON's bundled demo simulations give typical use cases for the library.
 Running these simulations with code coverage detection turned on has given a good overview of which parts of the code are used regularly (Fig. \ref{fig:coverage_heatbugs}).
 Core simulation code that is used routinely by all simulations regardless of their customisations should be tested the most rigourously.
 Both the documentation\cite[pp.85]{mason_doc} and code coverage checks indicate that this type of code can be found within \texttt{sim.engine}.
@@ -187,16 +193,16 @@ Both the documentation\cite[pp.85]{mason_doc} and code coverage checks indicate 
 \subsubsection{Expected Behaviour}
 %usage by a private biological research institute
 %users will be research scientists with BASIC Java training
-The system behaviour has been tested against the inferred requirements of the client, a private biological research institute.
-
 %Explain how you have determined the expected behaviour of the software (in the absense of an exhaustive and explicit requirements specification)
 The expected behaviour of the software has been determined using the extensive MASON documentation\cite{mason_doc} and first-party example implementations.
-%move this to testing goals?-->
-The brief has not provided any specific use cases for the software, so the tests cannot be easily targeted at the end-user's specific needs.
+Many of these examples have been implemented using the ContinuousGrid classes which are outside of the test scope.
+
+The MASON documentation has conflicts, likely caused by parts of the document becoming out of date as the software is updated.
+One example of this is that in the tutorial section on Page 19, it describes different behaviour for the \texttt{-time} command line argument to that described in the formal documentation on page 91.
+In this case, and in general, the behaviour in the main documentation has been assumed correct and the tutorials assumed to be out of date.
+If a more ambiguous case had presented itself, exploratory testing could have been used to determine the expected behaviour.
 
 %what IS this expected behaviour: we are able to create and run agent-based simulations?
-
-%MENTION CONFLICTING STATEMENTS IN THE DOC
 
 \subsubsection{Unit Testing}
 Unit Testing allows the testing of small sections of source code.
@@ -268,7 +274,6 @@ Unfortunately neither the website nor the GitHub repository for MASON provide an
 Either this testing has not been done, which is common with freely-distributed software, or it has not been publicly distributed.
 As such, it will not be possible to run any regression testing as part of the project.
 
-\newpage
 \section{Test Case Specifications}% 30 Marks (3 pages)
 %Test case specifications for 8 fully specified test cases. The test cases must be complementary: they must make different assumptions and test different specific features of the library.
 	%At minimum, each test case should describe the stimulus applied to the software (which might be a sequence of API calls, a sequence of user actions that are taken, or something else) and the expected
@@ -296,7 +301,11 @@ Unit Test cases have been derived to target the methods in this class with the h
 \\
 
 \texttt{AbstractGrid2D} cannot be directly instantiated for this test, so \texttt{DoubleGrid2D} will be used as it extends the class without overriding \texttt{getHexagonalLocations}.
-%test abstract grid properties? - this is where some of the HIGHEST complexity is found
+A new \texttt{DoubleGrid2D} object is instantiated with width and height both equal to 150.
+The method is called with the origin x and y both equal to 120 and dist equal to 20.
+The grid mode is set to bounded, origin is set to be included and empty \texttt{IntBag}s are passed to the method.
+The expected output has been independently calculated using a hexagon point algorithm.
+These independently calculated point values have been manually verified as correct using a 2D graphing software.
 
 \subsection{Test Case 2}
 %no specific detail given in brief
@@ -307,11 +316,12 @@ In particular testing at boundaries is most likely to show ambiguities in the sp
 In the case of this method, a boundary case is checking that the values correctly wrap around when the grid is in toroidal mode.
 A new \texttt{DoubleGrid2D} is created with width 200 and height 160.
 The \texttt{getRadialLocations} method is invoked with an origin of (150, 150) and a radius of 20 so that the circle should wrap around the end of the grid in the y-direction.
-In this case, include origin is set to true and empty IntBags are passed into the method.
+In this case, include origin is set to true and empty \texttt{IntBag}s are passed into the method.
 \\
 
 Assertions are made to ensure that the size of the bags for x and y are both equal to 1345.
-The bags are then compared against the expected values as calculated by the midpoint circle algorithm.
+The bags are then compared against the expected values as calculated independently by the midpoint circle algorithm.
+These independently calculated point values have been manually verified as correct using a 2D graphing software.
 In order to check that the toroidal wrapping works correctly, the remainder operator is applied to these circle algorithm results with the height/width of the field.
 
 \subsection{Test Cases 3-4}
@@ -343,7 +353,6 @@ The scheduler will be stepped a number of times (10) to ensure that the \texttt{
 \textbf{Test Case 4} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events.
 As mentioned, the scheduler skips any empty timesteps, so providing a different start time or time interval will make little difference to the test.
 Again, the scheduler will be stepped a number of times (10) to ensure that the value is stepped multiple times as expected.
-\\
 
 \subsection{Test Case 5}
 %Test ERROR MESSAGES: this code tends to be weaker than mainstream functionality- will be important to guide less-confident users (beginner Java)
@@ -372,7 +381,7 @@ This test case will verify that the tool works as expected from the User Interfa
 	\hline
 	\textbf{Case} & \textbf{Pass} & \textbf{Level} & \textbf{Expected} & \textbf{Actual} & \multicolumn{1}{c|}{\textbf{Details}} \\
 	\hline
-	1 & \textcolor{pass_grn}{\cmark} & Unit &  &  & \\
+	1 & \textcolor{pass_grn}{\cmark} & Unit & A hexagonal set of points is created, such that the points match the expected values which have been independently calculated. & \textit{As Expected} & N/A \\
 	\hline
 	2 & \textcolor{fail_red}{\xmark} & Unit & The circular points that are generated should wrap around to 0 when they become greater than the height of the coordinate system. & The points wrap around, but go past the origin and become negative. & This is a major bug as it may significantly impact the results of simulations. \\
 	\hline
@@ -395,7 +404,7 @@ This test case will verify that the tool works as expected from the User Interfa
 \section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
-A wide spectrum of testing has been performed at all levels of the software.
+A wide spectrum of testing has been performed including all levels of the software.
 %While limited to select classes.. 
 %These tests achieve a good level of code coverage () over these essential functionality.
 %similar coverage to DEMO projects?

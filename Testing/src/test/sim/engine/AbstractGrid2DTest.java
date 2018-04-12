@@ -21,6 +21,26 @@ public class AbstractGrid2DTest {
 	}
 
 	@Test
+	public void testHex(){
+		IntBag x = new IntBag();
+		IntBag y = new IntBag();
+
+		int origin_x = 120;
+		int origin_y = 120;
+		int radius = 20;
+
+		toTest.getHexagonalLocations(origin_x, origin_y, radius, Grid2D.BOUNDED, true, x, y);
+
+		assertEquals("x and y are matching", x.size(), y.size());
+
+		for(int i = 0; i < x.size(); i++){
+			assertTrue("y in bounds", 100 <= y.get(i) && y.get(i) <= 140);
+			assertTrue("x in bounds", 100 <= x.get(i) && x.get(i) <= 140);
+		}
+
+	}
+
+	@Test
 	public void testRadial(){
 		IntBag x = new IntBag();
 		IntBag y = new IntBag();
@@ -31,7 +51,7 @@ public class AbstractGrid2DTest {
 
 		toTest.getRadialLocations(origin_x, origin_y, radius, Grid2D.TOROIDAL, true, x, y);
 
-		assertTrue("x and y are matching", x.size() == y.size());
+		assertEquals("x and y are matching", x.size(), y.size());
 		assertEquals("x.size() == 1345", 1345, x.size());
 
 		for(int i = -radius; i <= radius; i++){
