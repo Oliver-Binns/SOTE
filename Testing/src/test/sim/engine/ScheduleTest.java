@@ -20,23 +20,30 @@ public class ScheduleTest{
     @Test
     public void stepTest(){
         schedule.scheduleOnce(increment);
+        assertEquals("Before Simulation var set properly.", Schedule.BEFORE_SIMULATION, schedule.time, 0);
 
         assertEquals("Incrementer is at 0.", increment.i, 0);
         for(int i = 0; i < 10; i++) {
             schedule.step(state);
             assertEquals("Increment has been stepped.", increment.i, 1);
         }
+
+        assertEquals("After Simulation var set properly.", Schedule.AFTER_SIMULATION, schedule.time, 0);
     }
 
     @Test
     public void intervalTest(){
-        schedule.scheduleRepeating(0, increment, 3.0);
+        schedule.scheduleRepeating(3, increment, 3.0);
+        assertEquals("Before Simulation var set properly.", Schedule.BEFORE_SIMULATION, schedule.time, 0);
 
         assertEquals("Incrementer is at 0.", increment.i, 0);
         for(int i = 0; i < 10; i++){
             assertEquals("Adds a repeating event. This event should be called every 3 iterations.", increment.i, i);
             schedule.step(state);
+            assertEquals("Adds a repeating event. This event should be called every 3 iterations.", increment.i, i+1);
         }
+
+        assertEquals("Time Var set properly", 30, schedule.time, 0);
     }
 
     class Increment implements Steppable{

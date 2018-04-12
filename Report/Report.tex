@@ -70,7 +70,7 @@ The software fits into the category of shrinkwrap meaning it might be in use in 
 	%only "fun" things are done
 	%i.e. NOT TESTING
 For MASON in particular, it is likely that the software has not been thoroughly tested as there is no trace of any automated testing, either on the MASON website, or its GitHub repository.
-This report documents testing of the latest version (19.0) of MASON, with the aim to discover whether this software is dependable.
+This report documents testing of the latest version (19.0) of MASON, which has been obtained from the MASON website, with the aim to discover whether this software is dependable.
 %usage statistics can provide with an estimate of how well it needs to work
 %biological simulations- high profile studies have based hypotheses on this framework
 
@@ -285,14 +285,34 @@ As such, it will not be possible to run any regression testing as part of the pr
 %o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
 %o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
 \subsection{Test Case 1}
-%While limited to select classes.. 
-%These tests achieve a good level of code coverage () over these essential functionality.
 %Having a good understanding of the classes' intentions should ensure that the tests are also meaningful
 
-%Test at the boundaries- more likely to reveal ambiguities in the specification
-%Test ERROR MESSAGES: this code tends to be weaker than mainstream functionality- will be important to guide less-confident users (beginner Java)
-	%:all from \cite{lessons_book}
+
+The \texttt{AbstractGrid} classes are among those with the highest cyclomatic complexity.
+The other grid classes inherit code from these abstract classes, except SparseGrid2D which duplicates a great deal of code instead (Fig. \ref{fig:dupe_code}), implying this code is highly important.
+\texttt{AbstractGrid2D} also has the highest number of historic code changes out of the \texttt{sim.field.grid} package.
+These two metrics are worrying given that the simulation runs show that this class is routinely used to some extent.
+Unit Test cases have been derived to target the methods in this class with the highest complexity (Fig. \ref{fig:method_complexity}), specifically \texttt{getHexagonalLocations}.
+\\
+
+\texttt{AbstractGrid2D} cannot be directly instantiated for this test, so \texttt{DoubleGrid2D} will be used as it extends the class without overriding \texttt{getHexagonalLocations}.
+%test abstract grid properties? - this is where some of the HIGHEST complexity is found
+
 \subsection{Test Case 2}
+%no specific detail given in brief
+%but previous published biological simulations using MASON have been implemented using ObjectGrid2D.
+Another method of \texttt{AbstractGrid2D} which has a high cyclomatic complexity is \texttt{getRadialLocations}.
+This method will also be tested to ensure its behaviour is expected.
+In particular testing at boundaries is most likely to show ambiguities in the specifications\cite[pp.25]{lessons_book}, thus revealing bugs.
+In the case of this method, a boundary case is checking that the values correctly wrap around when the grid is in toroidal mode.
+A new \texttt{DoubleGrid2D} is created with width 200 and height 160.
+The \texttt{getRadialLocations} method is invoked with an origin of (150, 150) and a radius of 20 so that the circle should wrap around the end of the grid in the y-direction.
+In this case, include origin is set to true and empty IntBags are passed into the method.
+\\
+
+Assertions are made to ensure that the size of the bags for x and y are both equal to 1345.
+The bags are then compared against the expected values as calculated by the midpoint circle algorithm.
+In order to check that the toroidal wrapping works correctly, the remainder operator is applied to these circle algorithm results with the height/width of the field.
 
 \subsection{Test Cases 3-4}
 \begin{wrapfigure}[22]{r}{0.4\textwidth} 
@@ -326,6 +346,9 @@ Again, the scheduler will be stepped a number of times (10) to ensure that the v
 \\
 
 \subsection{Test Case 5}
+%Test ERROR MESSAGES: this code tends to be weaker than mainstream functionality- will be important to guide less-confident users (beginner Java)
+	%:all from \cite{lessons_book}
+
 \subsection{Test Case 6}
 \subsection{Test Case 7}
 This test case will verify that the tool is able to run from the command-line, correctly reacting to user configurations.
@@ -351,7 +374,7 @@ This test case will verify that the tool works as expected from the User Interfa
 	\hline
 	1 & \textcolor{pass_grn}{\cmark} & Unit &  &  & \\
 	\hline
-	2 & \textcolor{pass_grn}{\cmark} & Unit &  &  & \\
+	2 & \textcolor{fail_red}{\xmark} & Unit & The circular points that are generated should wrap around to 0 when they become greater than the height of the coordinate system. & The points wrap around, but go past the origin and become negative. & This is a major bug as it may significantly impact the results of simulations. \\
 	\hline
 	3 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once, in first simulation step. & \textit{As Expected} & N/A\\
 	\hline
@@ -361,7 +384,7 @@ This test case will verify that the tool works as expected from the User Interfa
 	\hline
 	6 & \textcolor{pass_grn}{\cmark} & Integration &  &  &  \\
 	\hline
-	7 & \textcolor{fail_red}{\cmark} & System & The simulation runs and stops after 200,000 steps. & The simulation is run, but does not stop. It does not appear to react to any command-line arguments. & \\
+	7 & \textcolor{pass_grn}{\cmark} & System & The simulation runs and stops after 200,000 steps. &  & Documentation is conflicting.\\
 	\hline
 	8 & \textcolor{pass_grn}{\cmark} & System &&& \\
 	\hline
@@ -373,6 +396,9 @@ This test case will verify that the tool works as expected from the User Interfa
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
 A wide spectrum of testing has been performed at all levels of the software.
+%While limited to select classes.. 
+%These tests achieve a good level of code coverage () over these essential functionality.
+%similar coverage to DEMO projects?
 \\
 
 	%a summary of the results you observed, including a classification of the faults found (by an appropriate classification scheme of your choosing)
@@ -384,9 +410,15 @@ A wide spectrum of testing has been performed at all levels of the software.
 Despite the limited resources, a number of bugs in the code have been detected.
 This is an indicator that the software may not have been tested as rigorously as could be expected.
 
+Test Case 2 has uncovered a bug in which the calculation of y values is incorrect for grids that are toroidal.
+This type of grid has previously been used in MASON biological simulations\cite{ppsim} so it can assumed as a dependency of future simulations created by the end users.
+As this code is \textit{also} duplicated in a different class, it effectively means that two bugs have been found with this test.
+%Impact on code?
+This is a major bug, which
+
 Test Case 7 covers a case which conflicts in the documentation.
 %IF any bugs found: despite a very limited number of tests, we have managed to find bugs in the code.
-%This is an indicator that the software may not have been tested as rigorously by the original developer as we would like to think.
+%This is indicative that the software may not have been tested as rigorously by the original developer as we would like to think.
 %Raises alarm bells, we should perhaps test further to discover if this is a fluke- or disregard the software as an option.
 \\
 
@@ -528,6 +560,20 @@ class Increment implements Steppable{
 \includegraphics[width=0.8\textwidth]{Appendix/complexityVchange}
 \caption{Cyclomatic Complexity and Number of File Revisions for classes in test scope}
 \label{fig:complexityVchange}
+\end{figure}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.8\textwidth]{Appendix/duplicated_code}
+\caption{Screenshot showing IntelliJ's detection of duplicated code between AbstractGrid2D and SparseGrid2D}
+\label{fig:dupe_code}
+\end{figure}
+
+\begin{figure}[htp]
+\centering
+\includegraphics[width=0.8\textwidth]{Appendix/method_complexity}
+\caption{\texttt{AbstractGrid2D} methods with greatest cyclomatic complexity}
+\label{fig:method_complexity}
 \end{figure}
 
 \begin{figure}[htp]

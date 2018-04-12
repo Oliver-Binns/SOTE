@@ -11,3 +11,5 @@ The scope of the testing only needs to cover the following packages:
 * sim.engine
 * sim.field
 * sim.field.grid
+
+As part of this assessment, I found and fixed a [simple, yet significant bug](https://github.com/eclab/mason/pull/6) in the MASON Toolkit.
