@@ -2,6 +2,7 @@
 \usepackage[usenames, dvipsnames]{color}
 \definecolor{pass_grn}{RGB}{0, 230, 0}
 \definecolor{fail_red}{RGB}{230, 0, 0}
+\usepackage{array}
 \usepackage{fancyhdr}
 \usepackage{adjustbox}
 \usepackage[a4paper, total={6in, 8in}]{geometry}
@@ -26,6 +27,8 @@
 \date{\today}
 \setlength\parindent{0pt}
 
+
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
 %\setlength{\droptitle}{-2em} %ADJUST HEIGHT OF TITLE
 %\addtocontents{toc}{\protect\setcounter{tocdepth}{2}} %ADJUST WHICH SECTIONS APPEAR IN CONTENTS TABLE
 
@@ -75,6 +78,9 @@ This report documents testing of the latest version (19.0) of MASON, which has b
 %biological simulations- high profile studies have based hypotheses on this framework
 
 \subsubsection{Tools}
+MASON Version 19.0 was run on macOS High Sierra (10.13.4) using the Java Runtime Environment and Development Kit version 1.8.0\_131.
+\\
+
 The IntelliJ IDE was used to explore the code and develop automated tests.
 This IDE gives powerful features, including plugins for generating code metrics and displaying coverage of unit testing.
 Specifically, the MetricsReloaded plugin\cite{metrics_reloaded} has been used for generating the statistics in Fig. \ref{tables:metrics}.
@@ -167,6 +173,7 @@ Again \texttt{sim.engine} appears to be heavily used by the demo simulations.
 		%obviously here we have a set TIME- open assessment for 10 credit module
 There are a number of goals we could define for our testing, such as finding the maximum number of bugs or complying with regulator set demands.
 The given requirement here is to verify, with a limited number of resources, that the software is dependable.
+The testing will focus on showing that the system fits our non-functional requirements of quality, reliability and, to a lesser extent, having acceptable documentation.
 In general, it's better to test with the aim of showing a product fails, if we cannot do so then the product is reliable enough\cite[pp. 20]{lessons_book}.
 As such, the main requirement for our testing is to find any significant undiscovered bugs in commonly used code.
 \\
@@ -241,12 +248,14 @@ Java is a heavily object-oriented (OO) language. This will affect our testing as
 \subsubsection{System Testing}
 %In this case 'the system is our selected packages'
 While testing the system as a whole will not help us find low-level bugs, it will give a high-level view of whether the bulk of the functionality appears to work as expected.
-System testing of the application will be conducted using the MASON UI as a black-box test. As such, although the test relies on functionality provided by classes outside the test scope, the test cases will only attempt to verify functionality provided by classes which are in scope.
+Some system testing of the application will be conducted using the command-line as a black-box test.
+The MASON UI functionality is provided by the \texttt{sim.display} package, which is outside of the test scope.
 %what functional requirements are under test:
 \\
 
 System testing will also help us to verify the non-functional requirements that have been previously determined.
-In particular, our system testing will cover
+In particular, our system testing will attempt to cover the requirement of acceptable documentation.
+%In particular, our system testing will cover
 %non-functional requirements:
 	%basic Java programming?
 	%portability
@@ -260,6 +269,7 @@ However, it would helpful to discover if it is appropriate for the target audien
 A particularly important non-functional requirement of our software is that it can be operated effectively by our end users.
 In particular, our users have supposedly only received a basic level of Java training.
 It has been stated that MASON is less-suited to beginner programmers, when compared to other tools, such as NetLogo\cite{abm_platforms_review}.
+Indeed the MASON documentation itself states this\cite[pp.8]{mason_doc}.
 \\
 
 In order for acceptance testing to be meaningful, it should be performed on potential users.
@@ -335,7 +345,7 @@ In order to check that the toroidal wrapping works correctly, the remainder oper
 \end{wrapfigure}
 
 As previously stated, our initial integration testing will focus on the simulation scheduler which provides the core functionality for MASON.
-This scheduler works with the \texttt{SimState} class and custom implementations of the \texttt{Steppable} interface to provide the functionality that simulates the passing of time.
+This scheduler works alongside the \texttt{SimState} class and custom implementations of the \texttt{Steppable} interface to provide the functionality that simulates the passing of time.
 \\
 
 While this integration between classes may appear to be complex at first glance, with numerous methods available (Fig. \ref{fig:schedule}), many of its methods are simply overloads,  due to Java's lack of real support for default function arguments.
@@ -344,31 +354,50 @@ Testing a single example of \texttt{scheduleOnce} function, will provide a reaso
 
 \textbf{Test Case 3} will add a \texttt{Steppable} object to the \texttt{Schedule} and ensure that the \texttt{step} method work as expected.
 A by-product of this test, is the assurance that the \texttt{\_scheduleOnce} method also works as expected.
-As \texttt{\_scheduleOnce} is a private method, it will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(Steppable)}.
+As \texttt{\_scheduleOnce} is a private method, it should not be used by an integration test.
+Therefore, it will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(Steppable)}.
 Other overloading methods could be used instead with no difference on the test case as the scheduler skips any empty timesteps.
 In order to facilitate this test, a simple \texttt{Increment} class (Fig. \ref{code:increment}) has been created.
+\\
+
 The scheduler will be stepped a number of times (10) to ensure that the \texttt{Increment} value is correctly stepped.
+The expected behaviour is that the \texttt{Increment} class' step method will be called once, at the first simulation step.
+Future steps of the simulation should result in no effect.
 \\
 
 \textbf{Test Case 4} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events.
 As mentioned, the scheduler skips any empty timesteps, so providing a different start time or time interval will make little difference to the test.
+\\
+
 Again, the scheduler will be stepped a number of times (10) to ensure that the value is stepped multiple times as expected.
+Here, the expected is that the \texttt{Increment} class' step method is called each time (10) the simulation's schedule is stepped.
+
 
 \subsection{Test Case 5}
+%check do Loop?
+
+\subsection{Test Case 6}
 %Test ERROR MESSAGES: this code tends to be weaker than mainstream functionality- will be important to guide less-confident users (beginner Java)
 	%:all from \cite{lessons_book}
 
-\subsection{Test Case 6}
 \subsection{Test Case 7}
 This test case will verify that the tool is able to run from the command-line, correctly reacting to user configurations.
-The example simulation will be run for a specified number of 
+The HeatBugs example simulation will be used as it utilises Field classes that are in scope (as opposed to classes in \texttt{sim.field.continuous}).
+The aim of this test is to verify that the main documentation for MASON is correct, despite a conflict in the tutorial section.
+Well-written and correct documentation is a particularly important functional requirement for MASON.
 \\
-The documentation here is conflicting. On Page 91, the \texttt{-time} argument specifies that it will `print a timestamp every T simulation steps' whereas page 19 states that the argument means the simulation will `run for a limited time', behaviour that 19 attributes to the \texttt{-until} argument.
+
+The simulation will be run until a specific simulation time.
+The command run is \texttt{java sim.app.heatbugs.HeatBugs -until 200000}.
+The expected behaviour is for the system to output several lines of text showing the Job Number, Current Steps, Simulation Time and Rate of Steps to the console.
+\\
+
+\textit{N.B. The documentation here is conflicting. On Page 91, the \texttt{-time} argument specifies that it will `print a timestamp every T simulation steps' whereas page 19 states that the argument means the simulation will `run for a limited time', behaviour that 19 attributes to the \texttt{-until} argument.}
 
 \subsection{Test Case 8}
 %Testing non-deterministic events is hard:
 %We can perform some statistical analysis to ensure the output is expected?
-This test case will verify that the tool works as expected from the User Interface.
+
 
 \newpage
 \section{Test Results}% 15 marks (1.5 pages)
@@ -377,25 +406,25 @@ This test case will verify that the tool works as expected from the User Interfa
 
 %o: screenshots may be useful, but add them in appendix?
 \begin{adjustbox}{center}
-\begin{tabular}{|c|c|c|p{10em}|p{10em}|p{10em}|}
+\begin{tabular}{|c|c|P{5em}|p{10em}|p{10em}|p{10em}|}
 	\hline
 	\textbf{Case} & \textbf{Pass} & \textbf{Level} & \textbf{Expected} & \textbf{Actual} & \multicolumn{1}{c|}{\textbf{Details}} \\
 	\hline
 	1 & \textcolor{pass_grn}{\cmark} & Unit & A hexagonal set of points is created, such that the points match the expected values which have been independently calculated. & \textit{As Expected} & N/A \\
 	\hline
-	2 & \textcolor{fail_red}{\xmark} & Unit & The circular points that are generated should wrap around to 0 when they become greater than the height of the coordinate system. & The points wrap around, but go past the origin and become negative. & This is a major bug as it may significantly impact the results of simulations. \\
+	2 & \textcolor{fail_red}{\xmark} & Unit & The circular points that are generated should wrap around to 0 when they become greater than the height of the coordinate system. & The points wrap around, but go past the origin and become negative. & This is a \textbf{major} bug as it may significantly impact the results of simulations. \\
 	\hline
-	3 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once, in first simulation step. & \textit{As Expected} & N/A\\
+	3 & \textcolor{pass_grn}{\cmark} & \centering Integration (Class) & \texttt{i} variable is incremented once, in first simulation step. & \textit{As Expected} & N/A\\
 	\hline
-	4 & \textcolor{pass_grn}{\cmark} & Integration & \texttt{i} variable is incremented once for each simulation step. & \textit{As Expected} & N/A \\
+	4 & \textcolor{pass_grn}{\cmark} & Integration (Class) & \texttt{i} variable is incremented once for each simulation step. & \textit{As Expected} & N/A \\
 	\hline
-	5 & \textcolor{pass_grn}{\cmark} & Integration &  & & \\
+	5 & \textcolor{pass_grn}{\cmark} & Integration (Package) &  & & \\
 	\hline
-	6 & \textcolor{pass_grn}{\cmark} & Integration &  &  &  \\
+	6 & \textcolor{pass_grn}{\cmark} & Integration (Package) &  &  &  \\
 	\hline
-	7 & \textcolor{pass_grn}{\cmark} & System & The simulation runs and stops after 200,000 steps. &  & Documentation is conflicting.\\
+	7 & \textcolor{pass_grn}{\cmark} & System & The simulation runs and stops after 200,000 steps. & \textit{As Expected} & Documentation is conflicting, but it was possible to discern the correct behaviour. \\
 	\hline
-	8 & \textcolor{pass_grn}{\cmark} & System &&& \\
+	8 & \textcolor{pass_grn}{\cmark} & System & The simulation produces valid output. &  &  \\
 	\hline
 \end{tabular}
 \end{adjustbox}
@@ -405,52 +434,58 @@ This test case will verify that the tool works as expected from the User Interfa
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
 A wide spectrum of testing has been performed including all levels of the software.
-%While limited to select classes.. 
-%These tests achieve a good level of code coverage () over these essential functionality.
-%similar coverage to DEMO projects?
+\begin{wrapfigure}{r}{0.55\textwidth}
+\begin{tabular}{|c|r|r|r|}
+	\hline
+	\textbf{Package} & \textbf{Class} & \textbf{Method} & \textbf{Line} \\
+	\hline
+	\texttt{sim.engine} & 18 & 9 & 10 \\
+	\hline
+	\texttt{sim.field} & 0 & 0 & 0 \\
+	\hline
+	\texttt{sim.field.grid} & 16 & 3 & 4 \\
+	\hline
+\end{tabular}
+\caption{Code Coverage (\textbf{\%}) from Unit and Integration Testing}
+\label{fig:coverage_testing}
+\end{wrapfigure}
+This testing has aimed to cover the core (most-commonly used) functionality of the system as thoroughly as possible.
+The aim of this is to assert that the main requirement of the end-users (creating agent-based simulations) can be achieved using this library.
+While this testing has been limited to select classes, they do achieve a good level of code coverage over the essential functionality.
+For example, \textit{Test Case 2} achieves line and condition coverage of 81\% and 73\% respectively over its target method \texttt{getRadialLocations}.
+This code coverage is similar to that achieved by the MASON demo projects which, in are absense of any clearer specifications, are our expected use cases.
 \\
 
-	%a summary of the results you observed, including a classification of the faults found (by an appropriate classification scheme of your choosing)
+%a summary of the results you observed, including a classification of the faults found (by an appropriate classification scheme of your choosing)
 	%Defect severity:
 	%	Critical
 	%	Major
 	%	Medium
 	%	Cosmetic
-Despite the limited resources, a number of bugs in the code have been detected.
-This is an indicator that the software may not have been tested as rigorously as could be expected.
-
-Test Case 2 has uncovered a bug in which the calculation of y values is incorrect for grids that are toroidal.
+Testing has also been done on parts of the code with the highest complexity, this is where bugs are more likely to be found.
+Despite the limited resources, a \textit{major} bug in the code was detected here (\textit{Test Case 2}).
+The bug affects the calculation of y values for neighboring points when wrapping around the edge of a toroidal grid.
 This type of grid has previously been used in MASON biological simulations\cite{ppsim} so it can assumed as a dependency of future simulations created by the end users.
+While this is limited to a specific branch of code and may not be run regularly, if it is reached it may significantly change the results produced by the simulation.
+This is highly underdesirable.
 As this code is \textit{also} duplicated in a different class, it effectively means that two bugs have been found with this test.
+The presense of these bugs is an indicator that the software may not have been tested as rigorously as could be expected.
+\\
+
 %Impact on code?
-This is a major bug, which
-
-Test Case 7 covers a case which conflicts in the documentation.
-%IF any bugs found: despite a very limited number of tests, we have managed to find bugs in the code.
-%This is indicative that the software may not have been tested as rigorously by the original developer as we would like to think.
-%Raises alarm bells, we should perhaps test further to discover if this is a fluke- or disregard the software as an option.
+Additionally, \textit{Test Case 7} covers a case which has conflicting definitions in the documentation.
+Conflicting documentation is likely confuse the end-user of the software.
+This is likely to be particularly damaging in this case as the end-users only have a basic level of programming.
+Even with high-quality documentation MASON would already likely be a steep learning curve for the users.
 \\
-
-	%an overall evaluation of the thoroughness and quality of the testing you have performed
-		%o: code coverage results for unit testing?
-		%This should be in terms of what might be possible given substantial resources, not in terms of what is possible in a project with this time allocation and maximum report length.
-		%Describe the branch coverage and condition coverage, or the mutation score according to a reasonable mutation testing approach, that your tests achieved of the Java code (not of any other artefact). Briefly explain how you did it; make sure you state what tools you used and (where applicable) what mutation operators you used.
-The significant limitations of testing resources reduce the level of confidence with which we can say that the software is free from defects.
-I can assure that the core functionality, including the simulation scheduler works.
-
-The automated testing have achieved a code coverage of 
-	%an overall evaluation of the software tested (in terms of its freedom from faults)
-		%o: obviously due to time and limitations on the number of test cases, this is a limited assessment
-		%o: but OVERALL..?
-\\
-
-
 
 %Throughout, the summary report should only refer to the test cases that were specified in (B), not any other testing you may have performed.
-The MASON package seems to broadly function as expected, with the discovered faults having minimal impact on the core functionality of being able to produce and run agent-based simulations.
-None of the defects that have been discovered give any real reason to discount MASON as the package of choice for the simulation developers.
-However, before it is adopted, I recommend that a reasonable amount of acceptance testing is performed with a group of end users from the company.
-This will help to verify if the software is suitable for users with basic Java programming, as research\cite{abm_platforms_review} has suggested otherwise.
+The core functionality MASON package does seems to broadly function as expected.
+MASON can be used to produce and run agent-based simulations, but a number of bugs in the system may affect the correctness of results.
+It is likely that users with only basic training would be unable to debug any incorrect results caused by these bugs, providing they are even spotted.
+As such, I believe is is worth reviewing other simulation libraries to see if they could provide a better experience for our end users than MASON.
+If no better options are found, I would recommend that a reasonable amount of acceptance testing should be performed with a group of end users from the company before MASON is adopted.
+This will help to verify if the software is acceptable for the users' Java programming abilities, as research\cite{mason_doc, abm_platforms_review} has suggested otherwise.
 
 \newpage
 \raggedright
