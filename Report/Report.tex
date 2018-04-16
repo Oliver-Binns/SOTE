@@ -93,7 +93,7 @@ For a long term project, this would be particularly advantageous as any automate
 \subsection{Test Coverage}
 \subsubsection{System Overview}
 %Explain the overall strategy you used for creating test cases, and for selecting the specific test cases that you present in section B
-In order to design appropriate test cases an understanding of all levels of the system was needed. As resources here are significantly limited, with only 8 testcases are allowed, it will be necessary to ensure they are used in the most effective way.
+In order to design appropriate test cases an understanding of all levels of the system was needed. As resources here are significantly limited, with only 8 testcases allowed, it will be necessary to ensure they are used in the most effective way.
 %Clearly define what constitutes "the software under test" and list the features that you will test and not test
 As stated in the project brief, the testing only needs to cover the following packages, but not their subpackages:
 
@@ -230,7 +230,7 @@ Our unit testing will aim for 60-70\% code coverage of core code and \textasciit
 %testing interacting classes..
 	%focus on communication and flow of information between the modules
 
-Java is a heavily object-oriented (OO) language. This will affect our testing as in this type of software, much of the complexity is moved from algorithms in methods, to the connection of software components\cite[pp.236]{introduction_book}. We will therefore need a much greater focus on integration testing than unit testing.
+Java is a heavily object-oriented (OO) language. This will affect our testing as in this type of software, much of the complexity is moved from algorithms in methods, to the connection of software components\cite[pp.236]{introduction_book}. We will therefore need a greater focus on integration testing than unit testing. Four out of the eight available tests will be devoted to integration testing. 
 
 %not fully within the scope of our testing, we have only been asked to test
 	%sim.engine
@@ -266,7 +266,7 @@ is a particularly useful form of system testing, which can be used for verifying
 It can be useful for understanding the domain of our software better, but as we are not intending to further develop MASON, this is not particularly relevant here.
 %HELPS ENSURE THE CUSTOMER TRUSTS OUR QUALITY CLAIM
 However, it would helpful to discover if it is appropriate for the target audience.
-A particularly important non-functional requirement of our software is that it can be operated effectively by our end users.
+A particularly important non-functional requirement of our software is that it is fit for use, fit for purpose and can be operated effectively by our end users.
 In particular, our users have supposedly only received a basic level of Java training.
 It has been stated that MASON is less-suited to beginner programmers, when compared to other tools, such as NetLogo\cite{abm_platforms_review}.
 Indeed the MASON documentation itself states this\cite[pp.8]{mason_doc}.
@@ -300,8 +300,18 @@ As such, it will not be possible to run any regression testing as part of the pr
 %o: "Black box testing means that knowledge of the internals of the product doesn't play a significant part in your testing."\cite{lessons_book}
 %o: "To do black box testing well, learn about the user, their expectations and needs, the technology and configurations the software will run on, the other software that this software will interact with, the date the software must manage, the development process, and so on. The advantage of black box testing is that you probably think differently than the programmer, and, thus are likely to anticipate risks that the programmer missed."
 \subsection{Test Case 1}
-%Having a good understanding of the classes' intentions should ensure that the tests are also meaningful
+Code coverage runs (Fig. \ref{fig:coverage_heatbugs}) have shown that the \texttt{Schedule} class is frequently used during simulations.
+In particular, one of the most used methods is \texttt{getTimestamp}.
+As such, it should be tested to show it is performing correctly.
+\\
 
+For this test case, a new \texttt{Schedule} object is instantiated.
+No setup is done, and no items added to the schedule.
+The \texttt{getTimestamp} method is called with \texttt{3.0}, \texttt{"Before"} and \texttt{"Completed"} given as each of the three arguments.
+The method is expected to return the string \texttt{"3"}.
+
+\subsection{Test Case 2}
+%Having a good understanding of the classes' intentions should ensure that the tests are also meaningful
 
 The \texttt{AbstractGrid} classes are among those with the highest cyclomatic complexity.
 The other grid classes inherit code from these abstract classes, except SparseGrid2D which duplicates a great deal of code instead (Fig. \ref{fig:dupe_code}), implying this code is highly important.
@@ -317,7 +327,7 @@ The grid mode is set to bounded, origin is set to be included and empty \texttt{
 The expected output has been independently calculated using a hexagon point algorithm.
 These independently calculated point values have been manually verified as correct using a 2D graphing software.
 
-\subsection{Test Case 2}
+\subsection{Test Case 3}
 %no specific detail given in brief
 %but previous published biological simulations using MASON have been implemented using ObjectGrid2D.
 Another method of \texttt{AbstractGrid2D} which has a high cyclomatic complexity is \texttt{getRadialLocations}.
@@ -332,17 +342,17 @@ In this case, include origin is set to true and empty \texttt{IntBag}s are passe
 Assertions are made to ensure that the size of the bags for x and y are both equal to 1345.
 The bags are then compared against the expected values as calculated independently by the midpoint circle algorithm.
 These independently calculated point values have been manually verified as correct using a 2D graphing software.
-In order to check that the toroidal wrapping works correctly, the remainder operator is applied to these circle algorithm results with the height/width of the field.
-
-\subsection{Test Cases 3-4}
-\begin{wrapfigure}[22]{r}{0.4\textwidth} 
+In order to check that the toroidal wrapping works correctly, the remainder operator is applied to these circle
+\begin{wrapfigure}[20]{r}{0.4\textwidth} 
 	\vspace{-25pt}
 	\begin{center}
 		\includegraphics[width=0.4\textwidth]{Appendix/Schedule}
 		\caption{Schedule Class}
 		\label{fig:schedule}
 	\end{center}
-\end{wrapfigure}
+\end{wrapfigure} algorithm results with the height/width of the field.
+
+\subsection{Test Cases 4-5}
 
 As previously stated, our initial integration testing will focus on the simulation scheduler which provides the core functionality for MASON.
 This scheduler works alongside the \texttt{SimState} class and custom implementations of the \texttt{Steppable} interface to provide the functionality that simulates the passing of time.
@@ -352,7 +362,7 @@ While this integration between classes may appear to be complex at first glance,
 Testing a single example of \texttt{scheduleOnce} function, will provide a reasonable assurance that the functionality works, as code is shared with each overloaded instance calling the private \texttt{\_scheduleOnce} method.
 \\
 
-\textbf{Test Case 3} will add a \texttt{Steppable} object to the \texttt{Schedule} and ensure that the \texttt{step} method work as expected.
+\textbf{Test Case 4} will add a \texttt{Steppable} object to the \texttt{Schedule} and ensure that the \texttt{step} method work as expected.
 A by-product of this test, is the assurance that the \texttt{\_scheduleOnce} method also works as expected.
 As \texttt{\_scheduleOnce} is a private method, it should not be used by an integration test.
 Therefore, it will be called indirectly by one of its overloading methods: \texttt{scheduleOnce(Steppable)}.
@@ -365,23 +375,52 @@ The expected behaviour is that the \texttt{Increment} class' step method will be
 Future steps of the simulation should result in no effect.
 \\
 
-\textbf{Test Case 4} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events.
+\textbf{Test Case 5} is similar, but will utilise the \texttt{scheduleRepeating(Steppable)} to ensure that the Schedule correctly manages recurring events.
 As mentioned, the scheduler skips any empty timesteps, so providing a different start time or time interval will make little difference to the test.
-\\
-
 Again, the scheduler will be stepped a number of times (10) to ensure that the value is stepped multiple times as expected.
 Here, the expected is that the \texttt{Increment} class' step method is called each time (10) the simulation's schedule is stepped.
 
+\subsection{Test Case 6-7}
+A simple simulation case will be created and tested to show that \texttt{sim.engine} can be integrated with \texttt{sim.field.grid}.
+The aim is to show that simulations can be \textit{created} using MASON.
+The test cases will be run as a grey-box test, assuming only knowledge given by public methods and interfaces of each package.
+This is how end-users would create simulations using MASON.
+As the end-user is using the system as a framework in their own programming, this case is on a blurred line between integration and system testing.
+\\
 
-\subsection{Test Case 5}
 %check do Loop?
+A very simple ABM simulation which models the collision of two objects has been created.
+The \texttt{Steppable} object class has been created with a position and direction  as shown in Fig. \ref{code:car_class}.
+Each time the objects are stepped, they move one square diagonally in their current direction.
+If two objects collide, the simulation ends.
+Given this implementation, the relative speeds of the object can be set by adding a time interval when adding the objects to the simulation schedule.
+We cannot easily test the \texttt{doLoop} function for this as it exits the program not allowing our post assertions to be run.
+\\
 
-\subsection{Test Case 6}
+In \textbf{Test Case 6}, a \texttt{DoubleGrid2D} with both width and height of 20 is created to track the locations of the objects.
+Two of these objects are created at (0, 0) and (19, 19) both moving towards the center of the grid.
+The object at (0, 0) is scheduled to move with interval 2.0, while the other will move with interval 3.0.
+The simulation is expected to last 24 timesteps, with cars colliding as they both occupy cell (11, 11).
+As the simulation does not get killed until the timestep is ended, car is expected to move to cell (12, 12) after the collision.
+Assertions are made to ensure that this calculated behaviour is matched by the simulation.
+\textit{N.B. The \texttt{Schedule.step} method ignores and skips empty timesteps. This method therefore only needs to be called 16 times (or alternatively while \texttt{Schedule.scheduleComplete} is false.)}
+\\
 %Test ERROR MESSAGES: this code tends to be weaker than mainstream functionality- will be important to guide less-confident users (beginner Java)
 	%:all from \cite{lessons_book}
 
-\subsection{Test Case 7}
+\textbf{Test Case 7} uses a similar setup to the previous test.
+The aim of this test case is to ensure that the the grid objects can detect their neighbours in simulation steps.
+The step function is enhanced to detect collisions when the objects are 3 cells apart- before they might occur.
+This is done by calling \texttt{DoubleGrid2D.getRadialNeighbours} with the current position of the object, the origin should not be included.
+At this point the agents randomly change one of their directions to avoid each other.
+The grid is made toroidal and the object class movement functions updated accordingly.
+The simulation should now be infinite, but clearly this is unverifiable.
+The simulation is stepped and assertions are made that a collision is detected at the the 22nd timestep and that one of the objects changes their direction.
+
+\subsection{Test Case 8}
 This test case will verify that the tool is able to run from the command-line, correctly reacting to user configurations.
+The case will be run as a black-box test, assuming no knowledge of simulation classes.
+The aim is to show that simulations can be \textit{executed} using MASON.
 The HeatBugs example simulation will be used as it utilises Field classes that are in scope (as opposed to classes in \texttt{sim.field.continuous}).
 The aim of this test is to verify that the main documentation for MASON is correct, despite a conflict in the tutorial section.
 Well-written and correct documentation is a particularly important functional requirement for MASON.
@@ -390,16 +429,12 @@ Well-written and correct documentation is a particularly important functional re
 The simulation will be run until a specific simulation time.
 The command run is \texttt{java sim.app.heatbugs.HeatBugs -until 200000}.
 The expected behaviour is for the system to output several lines of text showing the Job Number, Current Steps, Simulation Time and Rate of Steps to the console.
-\\
-
 \textit{N.B. The documentation here is conflicting. On Page 91, the \texttt{-time} argument specifies that it will `print a timestamp every T simulation steps' whereas page 19 states that the argument means the simulation will `run for a limited time', behaviour that 19 attributes to the \texttt{-until} argument.}
+\label{conflict}
 
-\subsection{Test Case 8}
 %Testing non-deterministic events is hard:
 %We can perform some statistical analysis to ensure the output is expected?
 
-
-\newpage
 \section{Test Results}% 15 marks (1.5 pages)
 %The test results for each of the tests that were specified in item B.
 	%Here, you should document the results that occurred when the test cases are run. You should provide explicit indication of whether each test passed or failed, and in the latter case state what happened instead.
@@ -410,50 +445,59 @@ The expected behaviour is for the system to output several lines of text showing
 	\hline
 	\textbf{Case} & \textbf{Pass} & \textbf{Level} & \textbf{Expected} & \textbf{Actual} & \multicolumn{1}{c|}{\textbf{Details}} \\
 	\hline
-	1 & \textcolor{pass_grn}{\cmark} & Unit & A hexagonal set of points is created, such that the points match the expected values which have been independently calculated. & \textit{As Expected} & N/A \\
-	\hline
-	2 & \textcolor{fail_red}{\xmark} & Unit & The circular points that are generated should wrap around to 0 when they become greater than the height of the coordinate system. & The points wrap around, but go past the origin and become negative. & This is a \textbf{major} bug as it may significantly impact the results of simulations. \\
-	\hline
-	3 & \textcolor{pass_grn}{\cmark} & \centering Integration (Class) & \texttt{i} variable is incremented once, in first simulation step. & \textit{As Expected} & N/A\\
-	\hline
-	4 & \textcolor{pass_grn}{\cmark} & Integration (Class) & \texttt{i} variable is incremented once for each simulation step. & \textit{As Expected} & N/A \\
-	\hline
-	5 & \textcolor{pass_grn}{\cmark} & Integration (Package) &  & & \\
-	\hline
-	6 & \textcolor{pass_grn}{\cmark} & Integration (Package) &  &  &  \\
-	\hline
-	7 & \textcolor{pass_grn}{\cmark} & System & The simulation runs and stops after 200,000 steps. & \textit{As Expected} & Documentation is conflicting, but it was possible to discern the correct behaviour. \\
-	\hline
-	8 & \textcolor{pass_grn}{\cmark} & System & The simulation produces valid output. &  &  \\
+	1 & \textcolor{fail_red}{\xmark} & Unit & The entered timestamp (\texttt{double 3}) should be returned as a string. & The before simulation string argument is returned. & After a review of the code, it's clear that the time passed into the method is ignored in favour of the current simulation time. \\
 	\hline
 \end{tabular}
 \end{adjustbox}
 
-\newpage
+\begin{adjustbox}{center}
+\begin{tabular}{|c|c|P{5em}|p{10em}|p{10em}|p{10em}|}
+	\hline
+	\textbf{Case} & \textbf{Pass} & \textbf{Level} & \textbf{Expected} & \textbf{Actual} & \multicolumn{1}{c|}{\textbf{Details}} \\
+	\hline
+	2 & \textcolor{pass_grn}{\cmark} & Unit & A hexagonal set of points is created, such that the points match the expected values which have been independently calculated. & \textit{As Expected} & N/A \\
+	\hline
+	3 & \textcolor{fail_red}{\xmark} & Unit & The circular points that are generated should wrap around to 0 when they become greater than the height of the coordinate system. & The points wrap around, but go past the origin and become negative. & This is a \textbf{major} bug as it may significantly impact the results of simulations. \\
+	\hline
+	4 & \textcolor{pass_grn}{\cmark} & Integration (Class) & \texttt{i} variable is incremented once, in first simulation step. & \textit{As Expected} & N/A\\
+	\hline
+	5 & \textcolor{pass_grn}{\cmark} & Integration (Class) & \texttt{i} variable is incremented once for each simulation step. & \textit{As Expected} & N/A \\
+	\hline
+	6 & \textcolor{pass_grn}{\cmark} & Integration (Package) & Objects move through the grid and collide in cell (11, 11) at the 24th step. & \textit{As Expected} & N/A \\
+	\hline
+	7 & \textcolor{pass_grn}{\cmark} & Integration (Package) & A collision is detected and avoided at timestep 22. & \textit{As Expected} & N/A \\
+	\hline
+	8 & \textcolor{pass_grn}{\cmark} & System & The simulation runs and stops after 200,000 steps. & \textit{As Expected} & Documentation is conflicting, but it was possible to discern the correct behaviour. \\
+	\hline
+\end{tabular}
+\end{adjustbox}
+
 \section{Test Summary Report}% 30 marks (3 pages)
 %A test summary report that will contain at least:
 	%a summary of the testing that you performed
-A wide spectrum of testing has been performed including all levels of the software.
-\begin{wrapfigure}{r}{0.55\textwidth}
+\begin{wrapfigure}[8]{r}{0.55\textwidth}
 \begin{tabular}{|c|r|r|r|}
 	\hline
 	\textbf{Package} & \textbf{Class} & \textbf{Method} & \textbf{Line} \\
 	\hline
-	\texttt{sim.engine} & 18 & 9 & 10 \\
+	\texttt{sim.engine} & 18 & 18 & 18 \\
 	\hline
 	\texttt{sim.field} & 0 & 0 & 0 \\
 	\hline
-	\texttt{sim.field.grid} & 16 & 3 & 4 \\
+	\texttt{sim.field.grid} & 25 & 4 & 4 \\
 	\hline
 \end{tabular}
 \caption{Code Coverage (\textbf{\%}) from Unit and Integration Testing}
 \label{fig:coverage_testing}
 \end{wrapfigure}
+A wide spectrum of testing has been performed including all levels of the software.
 This testing has aimed to cover the core (most-commonly used) functionality of the system as thoroughly as possible.
 The aim of this is to assert that the main requirement of the end-users (creating agent-based simulations) can be achieved using this library.
 While this testing has been limited to select classes, they do achieve a good level of code coverage over the essential functionality.
 For example, \textit{Test Case 2} achieves line and condition coverage of 81\% and 73\% respectively over its target method \texttt{getRadialLocations}.
 This code coverage is similar to that achieved by the MASON demo projects which, in are absense of any clearer specifications, are our expected use cases.
+\textit{Test Case 1}, which covers this core functionality found a medium level bug in the \texttt{Schedule.getTimestamp} method.
+This bug is unlikely to significantly effect the output of our simulation's progression, but may affect the ability to track whether a simulation has begun or ended.
 \\
 
 %a summary of the results you observed, including a classification of the faults found (by an appropriate classification scheme of your choosing)
@@ -473,7 +517,7 @@ The presense of these bugs is an indicator that the software may not have been t
 \\
 
 %Impact on code?
-Additionally, \textit{Test Case 7} covers a case which has conflicting definitions in the documentation.
+Additionally, \textit{Test Case 8} covers a case which has conflicting definitions in the documentation as discussed in Section \ref{conflict}.
 Conflicting documentation is likely confuse the end-user of the software.
 This is likely to be particularly damaging in this case as the end-users only have a basic level of programming.
 Even with high-quality documentation MASON would already likely be a steep learning curve for the users.
@@ -597,6 +641,44 @@ class Increment implements Steppable{
 
 \caption{Simple Increment class used for Unit Testing}
 \label{code:increment}
+\end{figure}
+
+\begin{figure}[htp]
+\begin{lstlisting}[language=Java]
+public class Car implements Steppable {
+	private int x;
+	private int y;
+	private boolean x_reverse;
+	private boolean y_reverse;
+
+	public Car(int x, int y, boolean x_reverse, boolean y_reverse){
+		this.x = x;
+		this.y = y;
+
+		this.x_reverse = x_reverse;
+		this.y_reverse = y_reverse;
+	}
+
+	@Override
+	public void step(SimState state) {
+		Collision world = (Collision)state;
+		world.grid.set(x, y, null);
+
+		x += x_reverse ? -1: 1;
+		y += y_reverse ? -1: 1;
+
+		if(world.grid.get(x, y) != null){
+			world.kill();
+		}
+
+		world.grid.set(x, y, this);
+	}
+}
+
+\end{lstlisting}
+
+\caption{Simple moving object class. Accessors and mutators have been omitted.}
+\label{code:car_class}
 \end{figure}
 
 \begin{figure}[htp]

@@ -18,6 +18,13 @@ public class ScheduleTest{
     }
 
     @Test
+    public void timeTest(){
+        String ts = schedule.getTimestamp(3.0, "Before", "Completed");
+
+        assertEquals(ts, "3");
+    }
+
+    @Test
     public void stepTest(){
         schedule.scheduleOnce(increment);
         assertEquals("Before Simulation var set properly.", Schedule.BEFORE_SIMULATION, schedule.time, 0);
